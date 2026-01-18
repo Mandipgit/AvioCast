@@ -27,28 +27,28 @@ def _normalize_metar(icao: str, data: dict) -> dict:
     conditions = []
     temperature_c = None
 
-    # WIND 
+    # WIND prediction ko logic
     wind_match = re.search(r"(\d{3})(\d{2})KT", raw_metar)
     if wind_match:
         wind_dir = int(wind_match.group(1))
         wind_speed = int(wind_match.group(2))
 
-    #VISIBILITY 
+    #VISIBILITY prediction ko logic
     vis_match = re.search(r"\s(\d{4})\s", raw_metar)
     if vis_match:
         visibility_km = int(vis_match.group(1)) / 1000
 
-    # CLOUD CEILING (BKN / OVC only) 
+    # CLOUD CEILING prediction ko logic 
     cloud_match = re.search(r"(BKN|OVC)(\d{3})", raw_metar)
     if cloud_match:
         cloud_ceiling_ft = int(cloud_match.group(2)) * 100
 
-    #  WEATHER CONDITIONS 
+    #  WEATHER CONDITIONS prediction ko logic
     for wx in ["TS", "RA", "SN", "FG", "BR"]:
         if wx in raw_metar:
             conditions.append(wx)
 
-    # TEMPERATURE (18/12) 
+    # TEMPERATURE prediction ko logic
     temp_match = re.search(r"(\d{2})/\d{2}", raw_metar)
     if temp_match:
         temperature_c = int(temp_match.group(1))
