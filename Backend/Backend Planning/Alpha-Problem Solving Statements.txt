@@ -1,0 +1,277 @@
+1. First: Let’s clarify the real problem you are solving
+
+You are NOT trying to replace airline flight dispatch systems (those are extremely complex and regulated).
+
+You are building a Passenger Awareness App that:
+
+Shows weather conditions:
+
+Origin airport (e.g. Kathmandu)
+
+Destination airport (e.g. Biratnagar)
+
+Alternate airport (e.g. Bhadrapur)
+
+Gives a simple probability / risk indicator like:
+
+✅ Likely to operate
+
+⚠️ Risk of delay
+
+❌ High chance of cancellation/diversion
+
+👉 This is 100% achievable for a student project.
+
+2. Reality check (important)
+❌ What you should NOT promise
+
+“Exact flight prediction”
+
+“Guaranteed cancellation/operation”
+
+✅ What you CAN say
+
+“Weather-based risk estimation”
+
+“Passenger decision support tool”
+
+“Weather awareness for Nepal aviation”
+
+This keeps your project ethical, realistic, and impressive.
+
+3. Overall System Architecture (Simple & Clean)
+Flutter App (Frontend)
+       |
+       |  REST API
+       ↓
+FastAPI Backend
+       |
+       |  Weather API
+       ↓
+Weather Data Provider
+
+4. Weather APIs (Free vs Paid – Beginner Friendly)
+✅ Best option for you: OpenWeatherMap
+
+Why?
+
+Free tier available
+
+Easy to use
+
+Good documentation
+
+Works well with FastAPI
+
+Free plan gives you:
+
+Current weather
+
+Forecast (5 days)
+
+Parameters you need:
+
+Visibility
+
+Wind speed
+
+Cloud coverage
+
+Rain
+
+Temperature
+
+Pressure
+
+🔗 You’ll just need to sign up and get an API key.
+
+👉 Yes, it is FREE to start. Paid only if traffic increases.
+
+❌ Advanced aviation APIs (NOT for beginners)
+
+METAR / TAF paid services
+
+AviationWeather.gov (complex parsing)
+
+ICAO data feeds
+
+You can add these later if you want to upgrade.
+
+5. What weather factors affect flights in Nepal (Simplified)
+
+For your first version, use ONLY these 5 👇
+
+Factor	Why it matters
+Visibility	Major issue in Nepal
+Wind speed	Crosswind risk
+Rain	Runway conditions
+Cloud cover	VFR issues
+Thunderstorm	Cancellation risk
+6. “Prediction” – Keep it SIMPLE (Beginner-Friendly)
+❗ Important truth
+
+You DO NOT need AI or ML for this project.
+
+✅ Use Rule-Based Scoring System (Best for beginners)
+
+Example logic:
+
+If visibility < 3000m → high risk
+If wind speed > 20 knots → medium risk
+If thunderstorm present → high risk
+If heavy rain → medium risk
+
+
+Then calculate a risk score.
+
+Simple Scoring Example
+Condition	Score
+Good weather	+0
+Moderate issue	+1
+Severe issue	+2
+
+Then:
+
+0–2 → Likely to operate ✅
+
+3–4 → Possible delay ⚠️
+
+5+ → High risk ❌
+
+👉 This is easy, explainable, and impressive in evaluation.
+
+7. Alternate Airport Logic (Your BEST IDEA 💡)
+
+This is where your project becomes unique.
+
+Example:
+
+KTM → BIR
+Alternate: Bhadrapur
+
+Backend logic:
+
+Fetch weather for:
+
+Kathmandu
+
+Biratnagar
+
+Bhadrapur
+
+Calculate risk for each
+
+If destination risk is high BUT alternate is good → show:
+
+“Diversion possible but alternate weather favorable”
+
+🔥 This shows aviation understanding, not just coding.
+
+8. Backend (FastAPI) – What You Actually Build
+API Endpoints (Simple)
+GET /weather-risk?origin=KTM&dest=BIR&alt=BDP
+
+Backend Steps:
+
+Convert airport → latitude/longitude
+
+Call weather API
+
+Extract required fields
+
+Apply rule-based logic
+
+Return JSON response
+
+Example response:
+
+{
+  "origin": "Kathmandu",
+  "destination": "Biratnagar",
+  "alternate": "Bhadrapur",
+  "risk_level": "Medium",
+  "recommendation": "Possible delay",
+  "details": {
+    "visibility": "Low",
+    "wind": "Moderate",
+    "rain": "Present"
+  }
+}
+
+9. Flutter App (Keep UI Simple)
+Screens you need:
+
+Home Screen
+
+Select origin
+
+Select destination
+
+Select alternate
+
+Result Screen
+
+Risk indicator (color-based)
+
+Weather summary
+
+Simple explanation
+
+UI Colors:
+
+Green → Good
+
+Yellow → Caution
+
+Red → High Risk
+
+10. Project Roadmap (Follow this strictly)
+Phase 1 – Basics (Week 1–2)
+
+Learn API calling in FastAPI
+
+Fetch weather data
+
+Test in Postman
+
+Phase 2 – Logic (Week 3)
+
+Implement rule-based scoring
+
+Add alternate airport logic
+
+Phase 3 – Flutter Integration (Week 4)
+
+Connect Flutter to backend
+
+Display data nicely
+
+Phase 4 – Polish (Week 5)
+
+Error handling
+
+Loading animations
+
+11. Disclaimer (VERY IMPORTANT)
+
+Add this in your app:
+
+“This app provides weather-based risk estimation only and does not represent official airline or airport decisions.”
+
+This shows professionalism.
+
+12. Why this project is EXCELLENT for your future
+
+Combines IT + Aviation
+
+Shows problem-solving
+
+Real Nepal-specific problem
+
+Can evolve into:
+
+Final year project
+
+Startup idea
+
+Research paper

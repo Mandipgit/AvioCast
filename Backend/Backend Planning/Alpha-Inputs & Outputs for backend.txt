@@ -1,0 +1,268 @@
+1. What input should Flutter send?
+Principle (very important)
+
+Flutter should send only what the user knows,
+NOT what the system can derive.
+
+So Flutter should not send:
+
+Latitude / longitude
+
+Weather parameters
+
+Risk scores
+
+Those are backend responsibilities.
+
+Minimal & Correct Input from Flutter
+
+Think in terms of a flight search.
+
+Flutter sends:
+
+Origin airport code
+
+Example: KTM
+
+Destination airport code
+
+Example: BIR
+
+Alternate airport code
+
+Example: BDP
+
+Planned departure time (optional in v1)
+
+Example: 2026-02-10T09:30
+
+👉 That’s it.
+
+Why airport codes?
+
+Stable
+
+Aviation standard
+
+Easy to validate
+
+Map perfectly to a database
+
+Input Validation (Backend Responsibility)
+
+Backend should:
+
+Check airport codes exist in DB
+
+Ensure origin ≠ destination
+
+Ensure alternate ≠ destination
+
+Flutter should never do this logic.
+
+2. What should the backend return?
+Principle
+
+Backend should return:
+
+Decision
+
+Reason
+
+Human-readable explanation
+
+Not raw numbers unless useful.
+
+Backend Response (Conceptual)
+
+Backend returns a summary, not raw weather data.
+
+Think in 3 layers:
+
+A. Overall Result
+
+Risk level (Low / Medium / High)
+
+Recommendation (Proceed / Possible Delay / High Risk)
+
+B. Airport-wise Evaluation
+
+For:
+
+Origin
+
+Destination
+
+Alternate
+
+Each includes:
+
+Risk label
+
+Main weather issue
+
+C. Explanation (Critical for trust)
+
+Plain English explanation like:
+
+“Low visibility at Biratnagar and thunderstorms at Bhadrapur increase diversion risk.”
+
+Why this matters
+
+Passengers don’t understand:
+
+“Visibility = 1800m”
+They understand:
+
+“Low visibility may cause delay.”
+
+Your backend should translate data → meaning.
+
+3. What does the backend do internally? (Step-by-step)
+
+This is the most important part.
+Read this carefully.
+
+Step 1: Receive & Validate Request
+
+Accept airport codes
+
+Validate format
+
+Confirm airports exist in PostgreSQL
+
+No weather yet.
+
+Step 2: Fetch Airport Data from PostgreSQL
+
+For each airport:
+
+Get latitude
+
+Get longitude
+
+(Later: elevation)
+
+Why?
+Weather APIs don’t understand airport codes.
+
+Step 3: Fetch Weather Data (External API)
+
+For each airport:
+
+Call weather API using lat/long
+
+Get raw weather data
+
+This should be done via a weather service module, not in routes.
+
+Step 4: Normalize Weather Data
+
+Raw weather is messy.
+
+Backend should extract only:
+
+Visibility
+
+Wind speed
+
+Rain intensity
+
+Cloud coverage
+
+Thunderstorm presence
+
+Everything else is discarded.
+
+This creates clean internal data.
+
+Step 5: Apply Risk Rules (Core Logic)
+
+For each airport:
+
+Feed normalized data into risk rules
+
+Get:
+
+Risk score
+
+Risk label
+
+Reason
+
+This logic:
+
+Should not know about FastAPI
+
+Should not know about databases
+
+Only knows aviation + weather
+
+Step 6: Apply Alternate Airport Logic
+
+Now combine results:
+
+Example thinking:
+
+Destination = High Risk
+
+Alternate = Low Risk
+
+Backend conclusion:
+
+“Diversion possible but alternate weather acceptable.”
+
+This is decision-making, not data fetching.
+
+Step 7: Store Result in PostgreSQL
+
+Log:
+
+Route
+
+Time
+
+Risk outcome
+
+This is for:
+
+Learning backend persistence
+
+Future analytics
+
+Flutter doesn’t need to know this happened.
+
+Step 8: Build Clean Response & Return
+
+Backend constructs:
+
+Final risk assessment
+
+Airport-wise summary
+
+Explanation text
+
+Then returns response to Flutter.
+
+4. One Mental Model (Remember This)
+
+Flutter asks a question.
+FastAPI thinks.
+PostgreSQL remembers.
+Weather API informs.
+
+If you keep this mental model, your design will stay clean.
+
+5. Your First Design Exercise (Important)
+
+Before writing code, do this:
+
+✍️ Write down (in plain text):
+
+Request fields (name + meaning)
+
+Response fields (name + meaning)
+
+Internal steps (1–8 in your own words)
+
+Then send it to me.

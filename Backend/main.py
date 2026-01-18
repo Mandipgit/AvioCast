@@ -1,0 +1,27 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from routers.weather import router as weather_router
+from routers import weather
+
+
+
+app=FastAPI(
+    title="Aviation Weather Awareness API",
+    description="Backend API for aviation weather awareness and risk estimation for Nepal",
+    version="0.1.0"
+)
+app.include_router(weather_router)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+#Only to check
+def greet():
+    return "Hello to the new world baby"

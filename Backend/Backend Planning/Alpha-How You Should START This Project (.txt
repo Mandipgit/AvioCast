@@ -1,0 +1,297 @@
+How You Should START This Project (Backend Only)
+
+Think of this as Phase 0 → Phase 1.
+
+PHASE 0: Before Writing Any Code (Most Beginners Skip This ❌)
+Step 0.1 – Create a Project Folder (Mental Model)
+
+Your backend is not one file.
+
+You are building a service, so structure matters.
+
+At the highest level, you want:
+
+One entry point
+
+Separate logic
+
+Separate database handling
+
+Do NOT start by writing routes immediately.
+
+PHASE 1: Minimal but Professional Backend Structure
+
+Start with a simple but scalable structure.
+
+1. Entry Point (Application Start)
+
+File:
+
+main.py
+
+What this file is responsible for:
+
+Creating the FastAPI app
+
+Including routers
+
+Application startup
+
+What it should NOT do:
+
+Business logic
+
+Database queries
+
+Weather API calls
+
+Think of it as:
+
+“This is where the app starts running.”
+
+2. Configuration Layer (Very Important)
+
+Folder:
+
+config/
+
+File to start with:
+
+settings.py
+
+Responsibility:
+
+Environment variables
+
+API keys
+
+Database connection settings
+
+Why this matters:
+
+You will use:
+
+Weather API key
+
+PostgreSQL credentials
+
+These should never be hardcoded
+
+At this stage:
+
+Just define where configuration lives
+
+You can improve it later
+
+3. Database Layer (PostgreSQL)
+
+Folder:
+
+database/
+
+Start with these files conceptually:
+
+a) database.py
+
+Responsibility:
+
+Create database connection
+
+Manage sessions
+
+This is where FastAPI and PostgreSQL first meet.
+
+b) models/
+
+Folder inside database
+
+Start with:
+
+airport.py
+
+(Later) weather_request.py
+
+Each file:
+
+Represents one table
+
+One responsibility only
+
+Think:
+
+“One table = one model file”
+
+4. API Layer (What You Already Know)
+
+Folder:
+
+routers/
+
+Start with:
+
+weather.py
+
+Responsibility:
+
+Define API endpoints
+
+Accept input
+
+Return output
+
+Important rule:
+
+Routes should be thin.
+
+They should:
+
+Receive request
+
+Call service
+
+Return response
+
+They should NOT:
+
+Call weather APIs directly
+
+Contain risk logic
+
+5. Service Layer (Where You Grow as a Backend Dev)
+
+Folder:
+
+services/
+
+This is new territory for you — and that’s good.
+
+Start with:
+
+a) weather_service.py
+
+Responsibility:
+
+Talk to external weather API
+
+Return clean weather data
+
+b) risk_service.py
+
+Responsibility:
+
+Apply aviation risk rules
+
+Convert weather → risk
+
+This file contains:
+
+No FastAPI
+
+No database
+
+Pure logic
+
+This separation is what makes you professional.
+
+6. Schema Layer (Data Shape)
+
+Folder:
+
+schemas/
+
+Purpose:
+
+Define what data looks like
+
+Request vs response shapes
+
+Start with:
+
+Request schema (origin, destination, alternate)
+
+Response schema (risk, explanation)
+
+Even if you don’t fully understand it now — start using it slowly.
+
+PHASE 2: Order of Implementation (VERY IMPORTANT)
+
+Follow this order exactly 👇
+
+Step 1: Application Runs
+
+Create project
+
+Run FastAPI
+
+Confirm /docs works
+
+No business logic yet.
+
+Step 2: PostgreSQL Connection
+
+Connect FastAPI to PostgreSQL
+
+Create airports table
+
+Insert few Nepal airports manually
+
+Test:
+
+Can backend read airport data?
+
+Step 3: Airport Lookup API
+
+Simple GET endpoint
+
+Input: airport code
+
+Output: airport info
+
+This builds confidence.
+
+Step 4: Weather Service (Without Routes)
+
+Write logic to fetch weather by lat/long
+
+Test it independently (print/log output)
+
+No API endpoint yet.
+
+Step 5: Risk Logic (Pure Thinking)
+
+Implement rule-based scoring
+
+Input: normalized weather
+
+Output: risk level + reason
+
+Test with fake data.
+
+Step 6: Combine Everything in One Endpoint
+
+Only now:
+
+Route → service → DB → service → response
+
+This is the moment everything clicks.
+
+PHASE 3: How You Should Think While Coding
+
+Ask yourself constantly:
+
+“Does this belong in routes or services?”
+
+“Is this reusable?”
+
+“Am I mixing responsibilities?”
+
+If yes → stop and refactor.
+
+PHASE 4: Beginner Mistakes to Avoid 🚫
+
+❌ One giant main.py
+❌ Weather API calls inside routes
+❌ Hardcoding API keys
+❌ Flutter-level logic in backend
+
+Avoiding these already makes you better than many juniors.

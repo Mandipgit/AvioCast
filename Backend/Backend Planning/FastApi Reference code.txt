@@ -1,0 +1,155 @@
+-------------------------------------------------------------------------------- FastapiSetup ------------------------------------------------------------------------------------------------------
+*Check Python installed:
+	python --version
+*Create Virtual Environment:
+	python -m venv nameOfenv
+	*Install FastAPI and Uvicorn(Remember you create inside virtual envirnment)
+		pip install fastapi uvicorn
+
+
+
+---------------------------------------------------------------------------------------main.py------------------------------------------------------------------------------------------------------
+from fastapi import Depends,FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from models import Product
+from database import session, engine
+import database_models
+from sqlalchemy.orm import Session
+
+
+app=FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+database_models.Base.metadata.create_all(bind=engine)
+
+@app.get("/")
+def greet():
+    return "Hello! Welcome to the Home Page baby."
+
+products = [
+    Product(id=1, name="Laptop", description="Professional Laptop", price=75000, quantity=10),
+    Product(id=2, name="Laptop", description="Gaming", price=121000, quantity=7),
+    Product(id=3, name="Tablet", description="Educational", price=45000, quantity=15),
+    Product(id=4, name="Headphones", description="Wireless Audio", price=12000, quantity=25),
+    Product(id=5, name="Smartwatch", description="Fitness Tracker", price=18000, quantity=20),
+    Product(id=6, name="Camera", description="DSLR Photography", price=95000, quantity=5),
+    Product(id=7, name="Printer", description="Office Use", price=32000, quantity=8),
+    Product(id=8, name="Monitor", description="4K Display", price=60000, quantity=12),
+    Product(id=9, name="Keyboard", description="Mechanical Gaming", price=15000, quantity=30),
+    Product(id=10, name="Mouse", description="Wireless Optical", price=7000, quantity=40),
+    Product(id=11, name="Speaker", description="Bluetooth Audio", price=22000, quantity=18),
+    Product(id=12, name="Router", description="High Speed Internet", price=14000, quantity=22),
+    Product(id=13, name="PowerBank", description="Fast Charging", price=9000, quantity=35),
+    Product(id=14, name="SSD", description="1TB Storage", price=28000, quantity=16),
+    Product(id=15, name="HardDisk", description="External Backup", price=20000, quantity=14),
+    Product(id=16, name="Webcam", description="HD Video Calling", price=11000, quantity=19),
+    Product(id=17, name="Microphone", description="Studio Recording", price=26000, quantity=9),
+]
+
+@app.get("/products/{id}")
+def getProducts(id:int):
+    for product in products:
+        if product.id==id:
+            return product
+    else:
+            return "Product not Found"
+
+def init_db():
+     db=session()
+     count=db.query(database_models.Product).count()
+
+     if count==0:
+          for product in products:
+               db.add(database_models.Product(**product.model_dump()))
+
+     db.commit()
+
+init_db()
+
+def get_db():
+     db=session()
+     try:
+          yield db
+     finally:
+          db.close()
+
+@app.get("/products/")
+def getAllProducts(db:Session=Depends(get_db)):
+     db_products=db.query(database_models.Product).all()
+     return db_products
+    
+
+@app.post("/products/")
+def addProduct(product: Product,db:Session=Depends(get_db)):
+    db.add(database_models.Product(**product.model_dump()))
+    db.commit()
+    return product
+
+@app.put("/products/{id}")
+def updateProduct(id:int,product:Product,db:Session=Depends(get_db)):
+     db_product=db.query(database_models.Product).filter(database_models.Product.id==id).first()
+     if db_product:
+               db_product.name=product.name
+               db_product.description=product.description
+               db_product.price=product.price
+               db_product.quantity=product.quantity
+               db.commit()
+               return "Product Added Successfully"
+     else:
+          return "Product cant be added."
+     
+@app.delete("/products/{id}")
+def deleteProduct(id:int,db:Session=Depends(get_db)):
+     db_product=db.query(database_models.Product).filter(database_models.Product.id==id).first()
+     if db_product:
+          db.delete(db_product)
+          db.commit()
+          return "Product Deleted Successfully"
+     else:
+          return "Product not Found."
+     
+    
+             
+
+-------------------------------------------------------------------------------------models.py------------------------------------------------------------------------------------------------------
+
+from pydantic import BaseModel
+
+class Employee(BaseModel):
+    id:int
+    name:str
+    salary:int
+    experience:str
+    degree:str
+
+-----------------------------------------------------------------------------------database.py------------------------------------------------------------------------------------------------------
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+db_url="postgresql://postgres:9845@localhost:5432/mandeep"
+engine=create_engine(db_url)
+session=sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+----------------------------------------------------------------------------database_models.py------------------------------------------------------------------------------------------------------
+
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, Float, String
+
+Base=declarative_base()
+class Product(Base):
+    __tablename__="products"
+    id= Column(Integer, primary_key=True, index=True)
+    name=Column(String)
+    description=Column(String)
+    price=Column(Integer)
+    quantity=Column(Integer)
+

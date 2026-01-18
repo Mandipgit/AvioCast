@@ -1,0 +1,282 @@
+Backend (FastAPI) – Supervisor-Guided Start
+
+(No direct code, only structure, logic, and reasoning)
+
+1. First: How to Think About This Backend (Mindset)
+
+You are not building “just an API”.
+
+You are building a service that:
+
+Knows about airports
+
+Knows how to fetch weather
+
+Knows how to evaluate risk
+
+Can store results & history
+
+Can grow later (auth, analytics, ML, etc.)
+
+So your backend must be modular, not one giant file.
+
+2. High-Level Backend Structure (Very Important)
+
+Before writing a single line of code, decide structure.
+
+Mentally divide your backend into these layers:
+
+API Layer
+
+Handles HTTP requests
+
+Validates input
+
+Returns responses
+
+Service Layer (Business Logic)
+
+Weather fetching
+
+Risk calculation
+
+Alternate airport logic
+
+Data Layer
+
+PostgreSQL models
+
+Queries
+
+Persistence
+
+External Integration Layer
+
+Weather API communication
+
+👉 If you mix all of these in one place, the project becomes messy.
+
+3. PostgreSQL – What You Should Store (and Why)
+
+You do NOT need to store raw weather every second.
+
+Start minimal.
+
+Core Tables You Should Think About
+1. airports
+
+Purpose: Avoid hardcoding data.
+
+Think about storing:
+
+Airport code (KTM, BIR, BDP)
+
+Name
+
+Latitude
+
+Longitude
+
+Elevation (useful later)
+
+Why?
+
+Weather APIs need lat/long
+
+Easy to add more Nepal airports later
+
+2. weather_requests
+
+Purpose: Learning + analytics.
+
+Store:
+
+Origin airport
+
+Destination airport
+
+Alternate airport
+
+Request timestamp
+
+Calculated risk level
+
+Why?
+
+Learn how backend logs user behavior
+
+Later: “Most risky routes in monsoon”
+
+3. (Optional later) weather_snapshots
+
+Purpose: Advanced learning.
+
+Store:
+
+Visibility
+
+Wind
+
+Rain
+
+Cloud
+
+Risk score
+
+Airport
+
+You don’t need this in version 1, but it’s good to design for it.
+
+4. Weather API Integration – How to Think (No Code)
+DO NOT:
+
+Call weather API directly from routes
+
+Mix API calls with database logic
+
+INSTEAD:
+
+Create a weather service conceptually:
+
+Ask yourself:
+
+“What input does this service need?”
+
+Latitude
+
+Longitude
+
+“What output should it return?”
+
+Clean, simplified weather data
+
+Not raw API response
+
+Your backend should translate weather API chaos into aviation-friendly data.
+
+5. Risk Calculation – Your Core Intelligence 🧠
+
+This is the heart of the project.
+
+Think of this as a pure logic module:
+
+Input: weather data
+
+Output: risk score + explanation
+
+Ask yourself:
+
+What values define “bad visibility” in Nepal?
+
+At what wind speed does a small domestic aircraft struggle?
+
+When is rain a warning vs a danger?
+
+You already know aviation context — now convert it into rules.
+
+This logic should:
+
+Be testable
+
+Be readable
+
+Not depend on FastAPI or PostgreSQL
+
+(That’s how professionals write backend logic.)
+
+6. Alternate Airport Logic (Architectural Thinking)
+
+Don’t hardcode:
+
+“Kathmandu → Biratnagar → Bhadrapur”
+
+Instead:
+
+Store alternate airport in DB
+
+Or accept it dynamically via request
+
+Logic flow in your head:
+
+Evaluate destination
+
+If risk ≥ threshold
+
+Evaluate alternate
+
+Combine result into final recommendation
+
+This is decision logic, not API logic.
+
+7. API Design – Think Like a Backend Engineer
+
+Before coding, answer:
+
+What does the client need?
+
+What should be hidden?
+
+Good API traits:
+
+Simple inputs
+
+Clear outputs
+
+No unnecessary fields
+
+Example thinking (not code):
+
+Input: airport codes
+
+Output: risk + explanation
+
+Internal details stay internal
+
+Swagger is just a testing tool, not your design guide.
+
+8. How This Project Will Level Up Your FastAPI Skills
+
+You will learn:
+
+Dependency separation
+
+Service-based architecture
+
+External API handling
+
+PostgreSQL modeling
+
+Real-world logic (not CRUD only)
+
+This moves you from:
+
+“I know FastAPI basics”
+to
+“I can design backend systems”
+
+9. Your First Concrete Task (Do This Before Asking Code)
+Task 1: Design on Paper / Notes
+
+Write down:
+
+Folder structure you want
+
+Tables you will create
+
+Weather parameters you’ll use
+
+Risk scoring rules
+
+No IDE yet. Just thinking.
+
+10. What I’ll Do Next as Your Supervisor
+
+Once you reply, I can:
+
+Review your database schema idea
+
+Review your risk rules
+
+Help you improve API design
+
+Point out architecture mistakes before you code
