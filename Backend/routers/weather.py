@@ -1,74 +1,79 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from database.models.airport import AIRPORTS
-from services.checkwx_services import get_metar
 from services.open_meteo_service import get_forecast_weather
 from services.weather_normalizer import normalize_weather
 from services.risk_service import assess_weather_risk
+from risk_engine.alternate_airports import ALTERNATE_AIRPORTS
+from services.alternate_risk_comparator import compare_with_alternates
 
-router = APIRouter(
-    prefix="/weather",
-    tags=["Weather"]
-)
+router = APIRouter(prefix="/weather", tags=["Weather Risk"])
 
 
-@router.get("/{icao}")
-def fetch_weather_and_risk(icao: str):
-    """
-    Fetch aviation weather and assess flight risk for a given ICAO airport.
-    """
-
+@router.get("/risk/{icao}")
+def get_weather_risk(
+    icao: str,
+    include_alternates: bool = Query(default=False)
+):
     icao = icao.upper()
 
     # -------------------------
-    # 1️⃣ Airport lookup
+    # Validate destination
     # -------------------------
     airport = AIRPORTS.get(icao)
     if not airport:
-        raise HTTPException(
-            status_code=404,
-            detail="Airport not found"
+        raise HTTPException(status_code=404, detail="Airport not found")
+
+    # -------------------------
+    # Destination weather
+    # -------------------------
+    raw_weather = get_forecast_weather(
+        airport.latitude,
+        airport.longitude
+    )
+
+    normalized_weather = normalize_weather(icao, raw_weather)
+
+    # -------------------------
+    # No alternates requested
+    # -------------------------
+    if not include_alternates:
+        risk = assess_weather_risk(normalized_weather)
+        return {
+            "airport": airport.name,
+            "icao": icao,
+            "weather": normalized_weather,
+            "risk": risk
+        }
+
+    # -------------------------
+    # Fetch alternate weathers
+    # -------------------------
+    alternate_weathers = []
+
+    for alt_icao in ALTERNATE_AIRPORTS.get(icao, []):
+        alt_airport = AIRPORTS.get(alt_icao)
+        if not alt_airport:
+            continue
+
+        alt_raw = get_forecast_weather(
+            alt_airport.latitude,
+            alt_airport.longitude
         )
 
-    # -------------------------
-    # 2️⃣ Try METAR first
-    # -------------------------
-    metar_data = get_metar(icao)
-
-    if metar_data and "raw_metar" in metar_data:
-        normalized_weather = normalize_weather(icao, {
-            "source": "checkwx",
-            **metar_data
-        })
-
-    else:
-        # -------------------------
-        # 3️⃣ Fallback to Open-Meteo
-        # -------------------------
-        forecast_data = get_forecast_weather(
-            latitude=airport.latitude,
-            longitude=airport.longitude
-        )
-
-        normalized_weather = normalize_weather(icao, {
-            "source": "open-meteo",
-            **forecast_data
-        })
+        alt_normalized = normalize_weather(alt_icao, alt_raw)
+        alternate_weathers.append(alt_normalized)
 
     # -------------------------
-    # 4️⃣ Risk assessment
+    # Compare risks
     # -------------------------
-    risk_result = assess_weather_risk(icao, normalized_weather)
+    comparison = compare_with_alternates(
+        destination_weather=normalized_weather,
+        alternate_weathers=alternate_weathers
+    )
 
-    # -------------------------
-    # 5️⃣ Final response
-    # -------------------------
     return {
-        "airport": {
-            "icao": airport.icao,
-            "name": airport.name,
-            "latitude": airport.latitude,
-            "longitude": airport.longitude
-        },
-        "risk": risk_result,
+        "airport": airport.name,
+        "icao": icao,
+        "comparison": comparison
     }
