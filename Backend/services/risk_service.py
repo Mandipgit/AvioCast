@@ -1,7 +1,21 @@
-def assess_weather_risk(normalized_weather: dict) -> dict:
+from risk_engine.airport_profiles import AIRPORT_RISK_PROFILES
+
+
+def assess_weather_risk(icao: str, normalized_weather: dict) -> dict:
     """
-    Assess aviation weather risk using multiple operational factors.
+    Assess aviation weather risk using airport-specific operational factors.
     """
+
+    profile = AIRPORT_RISK_PROFILES.get(icao)
+
+   
+    if not profile:
+        profile = {
+            "category": "VALLEY",
+            "visibility_high_risk_km": 2,
+            "cloud_ceiling_high_risk_ft": 1500,
+            "wind_high_risk_kt": 20,
+        }
 
     score = 0
     reasons = []
@@ -13,73 +27,80 @@ def assess_weather_risk(normalized_weather: dict) -> dict:
     conditions = normalized_weather.get("conditions", [])
 
     # -------------------------
-    # Visibility Risk
+    # VISIBILITY (Airport-aware)
     # -------------------------
     if visibility is not None:
-        if visibility < 1:
+        if visibility < profile["visibility_high_risk_km"]:
             score += 3
-            reasons.append("Visibility below 1 km")
-        elif visibility < 3:
-            score += 2
-            reasons.append("Visibility between 1–3 km")
-        elif visibility < 5:
-            score += 1
-            reasons.append("Visibility between 3–5 km")
+            reasons.append(
+                f"Visibility below {profile['visibility_high_risk_km']} km"
+            )
 
     # -------------------------
-    # Wind Risk (speed-based)
-    # -------------------------
-    if wind_speed is not None:
-        if wind_speed > 25:
-            score += 3
-            reasons.append(f"Strong wind: {wind_speed} kt from {wind_dir}°")
-        elif wind_speed > 15:
-            score += 2
-            reasons.append(f"Moderate wind: {wind_speed} kt from {wind_dir}°")
-        elif wind_speed > 10:
-            score += 1
-
-    # -------------------------
-    # Cloud Ceiling Risk
+    # CLOUD CEILING
     # -------------------------
     if cloud_ceiling is not None:
-        if cloud_ceiling < 500:
+        if cloud_ceiling < profile["cloud_ceiling_high_risk_ft"]:
             score += 3
-            reasons.append("Cloud ceiling below 500 ft")
-        elif cloud_ceiling < 1000:
+            reasons.append(
+                f"Cloud ceiling below {profile['cloud_ceiling_high_risk_ft']} ft"
+            )
+
+    # -------------------------
+    # WIND
+    # -------------------------
+    if wind_speed is not None:
+        if wind_speed >= profile["wind_high_risk_kt"]:
             score += 2
-            reasons.append("Cloud ceiling below 1000 ft")
-        elif cloud_ceiling < 2000:
-            score += 1
+            reasons.append(
+                f"Strong wind: {wind_speed} kt from {wind_dir}°"
+            )
 
     # -------------------------
-    # Weather Phenomena Risk
+    # WEATHER PHENOMENA
     # -------------------------
-    for wx in conditions:
-        if wx in ["TS", "SN", "FG"]:
-            score += 3
-            reasons.append(f"Severe weather reported: {wx}")
-        elif wx in ["RA", "BR"]:
-            score += 1
-            reasons.append(f"Weather condition reported: {wx}")
+    if "FG" in conditions:
+        score += 2
+        reasons.append("Fog reported")
+
+    if "TS" in conditions:
+        score += 3
+        reasons.append("Thunderstorm activity")
+
+    if "SN" in conditions:
+        score += 2
+        reasons.append("Snowfall reported")
+
+    if "RA" in conditions:
+        score += 1
+        reasons.append("Rain reported")
 
     # -------------------------
-    # Final Risk Classification
+    # AIRPORT CATEGORY PENALTY
     # -------------------------
-    if score >= 6:
+    if profile["category"] == "MOUNTAIN":
+        score += 1
+        reasons.append("Mountain airport operations")
+
+    # -------------------------
+    # FINAL RISK LEVEL
+    # -------------------------
+    if score >= 7:
         risk_level = "HIGH"
-    elif score >= 3:
+    elif score >= 4:
         risk_level = "MODERATE"
     else:
         risk_level = "LOW"
 
     return {
-        "icao": normalized_weather.get("icao"),
+        "icao": icao,
+        "airport_category": profile["category"],
         "risk_level": risk_level,
         "risk_score": score,
         "reasons": reasons,
         "wind": {
             "speed_kt": wind_speed,
-            "direction_deg": wind_dir
-        }
+            "direction_deg": wind_dir,
+        },
+        "weather": normalized_weather, 
     }

@@ -4,7 +4,7 @@ from database.models.airport import AIRPORTS
 from services.checkwx_services import get_metar
 from services.open_meteo_service import get_forecast_weather
 from services.weather_normalizer import normalize_weather
-from services.risk_service import assess_weather_risk   
+from services.risk_service import assess_weather_risk
 
 router = APIRouter(
     prefix="/weather",
@@ -12,57 +12,63 @@ router = APIRouter(
 )
 
 
-@router.get("/{icao_code}")
-def get_weather(icao_code: str):
-    icao = icao_code.upper()
+@router.get("/{icao}")
+def fetch_weather_and_risk(icao: str):
+    """
+    Fetch aviation weather and assess flight risk for a given ICAO airport.
+    """
 
-    # airport ko validation
+    icao = icao.upper()
+
+    # -------------------------
+    # 1️⃣ Airport lookup
+    # -------------------------
     airport = AIRPORTS.get(icao)
     if not airport:
-        raise HTTPException(status_code=404, detail="Airport not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Airport not found"
+        )
 
-    raw_weather = None
-
-    # Try METAR first
+    # -------------------------
+    # 2️⃣ Try METAR first
+    # -------------------------
     metar_data = get_metar(icao)
-    if metar_data and "raw_metar" in metar_data:
-        raw_weather = {
-            "source": "checkwx",
-            "provider_response": metar_data
-        }
-        weather_payload = {
-            **metar_data,
-            "source": "checkwx"
-        }
 
-    # Option-1 fail vayesi fallback option for open meteo
+    if metar_data and "raw_metar" in metar_data:
+        normalized_weather = normalize_weather(icao, {
+            "source": "checkwx",
+            **metar_data
+        })
+
     else:
+        # -------------------------
+        # 3️⃣ Fallback to Open-Meteo
+        # -------------------------
         forecast_data = get_forecast_weather(
             latitude=airport.latitude,
             longitude=airport.longitude
         )
 
-        raw_weather = {
+        normalized_weather = normalize_weather(icao, {
             "source": "open-meteo",
-            "provider_response": forecast_data.get("raw")
-        }
+            **forecast_data
+        })
 
-        weather_payload = forecast_data
+    # -------------------------
+    # 4️⃣ Risk assessment
+    # -------------------------
+    risk_result = assess_weather_risk(icao, normalized_weather)
 
-    # Normalize weather 
-    normalized_weather = normalize_weather(icao, weather_payload)
-
-    # Risk assessment 
-    risk_result = assess_weather_risk(normalized_weather)
-
-    # Last ko professional response
+    # -------------------------
+    # 5️⃣ Final response
+    # -------------------------
     return {
-        "icao": icao,
         "airport": {
+            "icao": airport.icao,
             "name": airport.name,
-            "iata": airport.iata
+            "latitude": airport.latitude,
+            "longitude": airport.longitude
         },
-        "weather": normalized_weather,
         "risk": risk_result,
-        "raw": raw_weather
     }
