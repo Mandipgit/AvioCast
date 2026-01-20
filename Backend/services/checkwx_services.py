@@ -34,7 +34,9 @@ def get_metar(icao_code: str) -> dict:
 
         return {
             "icao": icao_code,
-            "raw_metar": metar_list[0]
+            "raw_metar": metar_list[0],
+            "source":"checkwx"
+            
         }
 
     except requests.exceptions.Timeout:

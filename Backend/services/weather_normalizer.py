@@ -1,3 +1,5 @@
+import re
+
 def normalize_weather(icao: str, weather_data: dict) -> dict:
     """
     Normalize METAR or forecast weather into a common aviation schema.
@@ -11,11 +13,16 @@ def normalize_weather(icao: str, weather_data: dict) -> dict:
     if source == "open-meteo":
         return _normalize_forecast(icao, weather_data)
 
-    raise ValueError("Unknown weather source")
+    return {
+        "icao": icao,
+        "error": "Could not normalize weather data",
+        "raw": weather_data
+    }
 
 
-import re
-
+# =========================================================
+# METAR NORMALIZATION
+# =========================================================
 
 def _normalize_metar(icao: str, data: dict) -> dict:
     raw_metar = data.get("raw_metar", "")
@@ -24,31 +31,53 @@ def _normalize_metar(icao: str, data: dict) -> dict:
     wind_dir = None
     visibility_km = None
     cloud_ceiling_ft = None
+    lowest_cloud_base_ft = None
     conditions = []
     temperature_c = None
 
-    # WIND prediction ko logic
-    wind_match = re.search(r"(\d{3})(\d{2})KT", raw_metar)
+    # -------------------------
+    # WIND
+    # -------------------------
+    wind_match = re.search(r"(VRB|\d{3})(\d{2})KT", raw_metar)
     if wind_match:
-        wind_dir = int(wind_match.group(1))
         wind_speed = int(wind_match.group(2))
+        if wind_match.group(1) != "VRB":
+            wind_dir = int(wind_match.group(1))
 
-    #VISIBILITY prediction ko logic
+    # -------------------------
+    # VISIBILITY
+    # -------------------------
     vis_match = re.search(r"\s(\d{4})\s", raw_metar)
     if vis_match:
         visibility_km = int(vis_match.group(1)) / 1000
 
-    # CLOUD CEILING prediction ko logic 
-    cloud_match = re.search(r"(BKN|OVC)(\d{3})", raw_metar)
-    if cloud_match:
-        cloud_ceiling_ft = int(cloud_match.group(2)) * 100
+    # -------------------------
+    # CLOUD LAYERS
+    # -------------------------
+    cloud_layers = re.findall(r"(FEW|SCT|BKN|OVC)(\d{3})", raw_metar)
 
-    #  WEATHER CONDITIONS prediction ko logic
-    for wx in ["TS", "RA", "SN", "FG", "BR"]:
+    for cover, height in cloud_layers:
+        height_ft = int(height) * 100
+
+        # Lowest cloud base (any cloud)
+        if lowest_cloud_base_ft is None or height_ft < lowest_cloud_base_ft:
+            lowest_cloud_base_ft = height_ft
+
+        # Ceiling only for BKN / OVC
+        if cover in ("BKN", "OVC"):
+            if cloud_ceiling_ft is None or height_ft < cloud_ceiling_ft:
+                cloud_ceiling_ft = height_ft
+
+    # -------------------------
+    # WEATHER PHENOMENA
+    # -------------------------
+    for wx in ["TS", "RA", "SN", "FG", "BR", "HZ"]:
         if wx in raw_metar:
             conditions.append(wx)
 
-    # TEMPERATURE prediction ko logic
+    # -------------------------
+    # TEMPERATURE
+    # -------------------------
     temp_match = re.search(r"(\d{2})/\d{2}", raw_metar)
     if temp_match:
         temperature_c = int(temp_match.group(1))
@@ -60,12 +89,16 @@ def _normalize_metar(icao: str, data: dict) -> dict:
         "wind_direction_deg": wind_dir,
         "visibility_km": visibility_km,
         "cloud_ceiling_ft": cloud_ceiling_ft,
+        "lowest_cloud_base_ft": lowest_cloud_base_ft,
         "temperature_c": temperature_c,
         "conditions": conditions,
         "raw": raw_metar
     }
 
 
+# =========================================================
+# FORECAST NORMALIZATION (OPEN-METEO)
+# =========================================================
 
 def _normalize_forecast(icao: str, data: dict) -> dict:
     visibility_m = data.get("visibility_m")
@@ -78,7 +111,7 @@ def _normalize_forecast(icao: str, data: dict) -> dict:
         "temperature_c": data.get("temperature_c"),
         "visibility_km": round(visibility_m / 1000, 1) if visibility_m else None,
         "cloud_ceiling_ft": None,
+        "lowest_cloud_base_ft": None,
         "conditions": [],
         "raw": data
     }
-

@@ -45,6 +45,16 @@ def assess_weather_risk(icao: str, normalized_weather: dict) -> dict:
             reasons.append(
                 f"Cloud ceiling below {profile['cloud_ceiling_high_risk_ft']} ft"
             )
+    
+    lowest_cloud = normalized_weather.get("lowest_cloud_base_ft")
+
+    if cloud_ceiling is None and lowest_cloud is not None:
+        if profile["category"] in ["MOUNTAIN", "VALLEY"] and lowest_cloud < 2000:
+            score += 1
+        reasons.append(
+            f"Low cloud base at {lowest_cloud} ft (terrain risk)"
+        )
+
 
     # -------------------------
     # WIND
