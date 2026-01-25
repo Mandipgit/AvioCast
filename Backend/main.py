@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routers.weather import router as weather_router
 from routers.flights import router as flights_router
+from routers.airports import router as airports_router
 
 app = FastAPI(
     title="Aviation Weather Awareness API",
@@ -15,6 +16,7 @@ app = FastAPI(
 # -------------------------
 app.include_router(weather_router)
 app.include_router(flights_router)
+app.include_router(airports_router)
 
 # -------------------------
 # CORS

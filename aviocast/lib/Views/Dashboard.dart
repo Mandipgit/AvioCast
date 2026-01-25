@@ -223,6 +223,45 @@ class _DashboardState extends State<Dashboard> {
                                   ],
                                   borderRadius: BorderRadius.circular(25),
                                 ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left:15),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top:15),
+                                        child: Text("DESTINATION",
+                                        style: TextStyle(
+                                          color: Colors.white60,
+                                          fontFamily: 'Roboto Condensed',
+                                          letterSpacing: 0.5,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w900
+                                        ),
+                                        ),
+                                      ),
+                                      Text("BDP",
+                                      style: TextStyle(
+                                        fontFamily: 'Playfair Display',
+                                        color: Colors.white,
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w900
+                                      ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left:3),
+                                        child: Text("Bhadrapur",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Roboto Condensed',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w900
+                                        ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ],
