@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 // Tertary:94B4C1
 // Last:EAE0CF
 bool TransferMode = false;
-bool dest_deptSelected=false;
+bool dest_deptSelected = false;
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -19,7 +19,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-   List airports = [];
+  List airports = [];
   String? selectedIcao;
 
   @override
@@ -32,6 +32,7 @@ class _DashboardState extends State<Dashboard> {
     final data = await ApiService.getAirports();
     setState(() => airports = data);
   }
+
   bool TransferMode = false;
   @override
   Widget build(BuildContext context) {
@@ -39,12 +40,12 @@ class _DashboardState extends State<Dashboard> {
       appBar: AppBar(
         backgroundColor: Color(0xFF213448),
         title: Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 10,left:5),
           child: Text(
             "Aviocast",
             style: TextStyle(
               fontSize: 50,
-              fontFamily: "Playfair Display",
+              fontFamily: "Montserrat",
               fontWeight: FontWeight.w900,
               color: Colors.white,
             ),
@@ -56,14 +57,14 @@ class _DashboardState extends State<Dashboard> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF213448), // Primary
-                        Color(0xFF547792), // Secondary
-                        Color(0xFF94B4C1), // Tertary
-                      ],
-                    ),
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF213448), // Primary
+              Color(0xFF547792), // Secondary
+              Color(0xFF94B4C1), // Tertary
+            ],
+          ),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -125,20 +126,26 @@ class _DashboardState extends State<Dashboard> {
                             Padding(
                               padding: const EdgeInsets.only(left: 30),
                               child: GestureDetector(
-                                onTapUp: (_)=>setState(() {
-                                  dest_deptSelected=true;
+                                onTapUp: (_) => setState(() {
+                                  dest_deptSelected = true;
                                 }),
-                                onTapDown: (_)=>setState(() {
-                                  dest_deptSelected=true;
+                                onTapDown: (_) => setState(() {
+                                  dest_deptSelected = true;
                                 }),
-                                onTapCancel: ()=>setState(() {
-                                  dest_deptSelected=true;
+                                onTapCancel: () => setState(() {
+                                  dest_deptSelected = true;
                                 }),
-                                onTap: () => setState(() {
-                                  PageRouteBuilder(pageBuilder: (_, __, ___){
-                                    return Stationselectpopup();
-                                  });
-                                }),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      opaque: false, 
+                                      pageBuilder: (_, __, ___) =>
+                                          Stationselectpopup(),
+                                    ),
+                                  );
+                                },
+
                                 child: Container(
                                   height: 100,
                                   width: 110,
@@ -154,39 +161,46 @@ class _DashboardState extends State<Dashboard> {
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.only(left:15),
+                                    padding: const EdgeInsets.only(left: 15),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(top:15),
-                                          child: Text("DEPARTURE",
+                                          padding: const EdgeInsets.only(
+                                            top: 15,
+                                          ),
+                                          child: Text(
+                                            "DEPARTURE",
+                                            style: TextStyle(
+                                              color: Colors.white60,
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "KTM",
                                           style: TextStyle(
-                                            color: Colors.white60,
                                             fontFamily: 'Roboto Condensed',
-                                            letterSpacing: 0.5,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w900
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w900,
                                           ),
-                                          ),
-                                        ),
-                                        Text("KTM",
-                                        style: TextStyle(
-                                          fontFamily: 'Playfair Display',
-                                          color: Colors.white,
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.w900
-                                        ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(left:3),
-                                          child: Text("Kathmandu",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'Roboto Condensed',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w900
+                                          padding: const EdgeInsets.only(
+                                            left: 2,top: 5
                                           ),
+                                          child: Text(
+                                            "Kathmandu",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Montserrat',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w900,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -256,39 +270,43 @@ class _DashboardState extends State<Dashboard> {
                                   borderRadius: BorderRadius.circular(25),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left:15),
+                                  padding: const EdgeInsets.only(left: 15),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(top:15),
-                                        child: Text("DESTINATION",
+                                        padding: const EdgeInsets.only(top: 15),
+                                        child: Text(
+                                          "DESTINATION",
+                                          style: TextStyle(
+                                            color: Colors.white60,
+                                            fontFamily: 'Montserrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        "BDP",
                                         style: TextStyle(
-                                          color: Colors.white60,
                                           fontFamily: 'Roboto Condensed',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w900
+                                          color: Colors.white,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w900,
                                         ),
-                                        ),
-                                      ),
-                                      Text("BDP",
-                                      style: TextStyle(
-                                        fontFamily: 'Playfair Display',
-                                        color: Colors.white,
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.w900
-                                      ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(left:3),
-                                        child: Text("Bhadrapur",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Roboto Condensed',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w900
-                                        ),
+                                        padding: const EdgeInsets.only(top: 5,left: 2),
+                                        child: Text(
+                                          "Bhadrapur",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -326,17 +344,16 @@ class _DashboardState extends State<Dashboard> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.search,
-                                  color: Colors.white,
-                                  ),
+                                  Icon(Icons.search, color: Colors.white),
                                   const SizedBox(width: 8),
-                                  Text("CHECK RISK LEVEL",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w900
-                                  ),
+                                  Text(
+                                    "CHECK RISK LEVEL",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
                                 ],
                               ),

@@ -1,10 +1,31 @@
 import 'dart:ui';
 
+import 'package:aviocast/Models/airport_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Stationselectpopup extends StatelessWidget {
+class Stationselectpopup extends StatefulWidget {
   const Stationselectpopup({super.key});
+
+  @override
+  State<Stationselectpopup> createState() => _StationselectpopupState();
+}
+
+class _StationselectpopupState extends State<Stationselectpopup> {
+  List airports = [];
+  String? selectedIcao;
+
+  @override
+  void initState() {
+    super.initState();
+    loadAirports();
+  }
+
+  Future<void> loadAirports() async {
+    final data = await ApiService.getAirports();
+    print(data);
+    setState(() => airports = data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +34,137 @@ class Stationselectpopup extends StatelessWidget {
       body: Stack(
         children: [
           BackdropFilter(
-            filter:ImageFilter.blur(sigmaX: 8,sigmaY: 8), 
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(color: Colors.black87),
+          ),
+          Center(
             child: Container(
-              color: Colors.black87,
+              height: MediaQuery.of(context).size.height * 0.75,
+              width: MediaQuery.of(context).size.width * 0.8,
+              decoration: BoxDecoration(
+                color: Color(0xFF0F1B2D),
+                borderRadius: BorderRadius.circular(60),
+                border: Border.all(color: Colors.white10),
+                boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 30)],
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30,
+                      left: 35,
+                      right: 35,
+                    ),
+                    child: _header(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Divider(color: Colors.white10),
+                  ),
+                  Expanded(
+                    child: airports.isEmpty
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.greenAccent,
+                            ),
+                          )
+                        : _stationList(context),
+                  ),
+                ],
+              ),
             ),
-            ),
-            Center(
-              
-            )
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _header() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "SELECT STATION",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.w900,
+            fontSize: 21,
+            color: Colors.white,
+            letterSpacing: 0.1,
+          ),
+        ),
+        Icon(Icons.keyboard_arrow_down, color: Colors.white54, size: 35),
+      ],
+    );
+  }
+
+  Widget stationCard({
+    required String city,
+    required String airport,
+    required String code,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Color(0xFF16233A),
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  city,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  airport,
+                  style: TextStyle(color: Colors.white54, fontSize: 12),
+                ),
+              ],
+            ),
+            Text(
+              code,
+              style: TextStyle(
+                color: Colors.greenAccent,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _stationList(BuildContext context) {
+    return ListView.builder(
+      itemCount: airports.length,
+      itemBuilder: (context, index) {
+        final airport = airports[index];
+        return stationCard(
+          city: airport['city'] ?? airport['name'] ?? "Unknown",
+          airport: airport['name'] ?? "Unknown",
+          code: airport['icao'] ?? "N/A",
+          onTap: () {
+            setState(() {
+              selectedIcao = airport['icao'];
+            });
+            Navigator.pop(context, selectedIcao);
+          },
+        );
+      },
     );
   }
 }
