@@ -1,4 +1,4 @@
-import 'package:aviocast/Views/Dashboard.dart';
+import 'package:aviocast/Views/Dashboard/Dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
