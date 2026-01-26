@@ -130,10 +130,10 @@ class _DashboardState extends State<Dashboard> {
                                   dest_deptSelected = true;
                                 }),
                                 onTapDown: (_) => setState(() {
-                                  dest_deptSelected = true;
+                                  dest_deptSelected = false;
                                 }),
                                 onTapCancel: () => setState(() {
-                                  dest_deptSelected = true;
+                                  dest_deptSelected = false;
                                 }),
                                 onTap: () {
                                   Navigator.push(
@@ -146,64 +146,70 @@ class _DashboardState extends State<Dashboard> {
                                   );
                                 },
 
-                                child: Container(
-                                  height: 100,
-                                  width: 110,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFF213448),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black45,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 4), // x, y
-                                      ),
-                                    ],
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 15),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 15,
-                                          ),
-                                          child: Text(
-                                            "DEPARTURE",
-                                            style: TextStyle(
-                                              color: Colors.white60,
-                                              fontFamily: 'Montserrat',
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w900,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          "KTM",
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto Condensed',
-                                            color: Colors.white,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 2,top: 5
-                                          ),
-                                          child: Text(
-                                            "Kathmandu",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'Montserrat',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w900,
-                                            ),
-                                          ),
+                                child: AnimatedScale(
+                                  scale: dest_deptSelected?1:0.85,
+                                  duration: const Duration(milliseconds: 150),
+                                  curve: Curves.easeOut,
+                                  child: Container(
+                                    height: 100,
+                                    width: 110,
+                                    decoration: BoxDecoration(
+                                      color: (Color(0xFF213448)),
+                                        
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black45,
+                                          blurRadius: 10,
+                                          offset: Offset(0, 4), // x, y
                                         ),
                                       ],
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 15),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 15,
+                                            ),
+                                            child: Text(
+                                              "DEPARTURE",
+                                              style: TextStyle(
+                                                color: Colors.white60,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w900,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "KTM",
+                                            style: TextStyle(
+                                              fontFamily: 'Roboto Condensed',
+                                              color: Colors.white,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 2,top: 5
+                                            ),
+                                            child: Text(
+                                              "Kathmandu",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Montserrat',
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w900,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

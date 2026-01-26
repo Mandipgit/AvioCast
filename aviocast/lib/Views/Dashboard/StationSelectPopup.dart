@@ -12,7 +12,7 @@ class Stationselectpopup extends StatefulWidget {
 }
 
 class _StationselectpopupState extends State<Stationselectpopup> {
-  List airports = [];
+  List<Map<String,dynamic>> airports = [];
   String? selectedIcao;
 
   @override
@@ -23,7 +23,6 @@ class _StationselectpopupState extends State<Stationselectpopup> {
 
   Future<void> loadAirports() async {
     final data = await ApiService.getAirports();
-    print(data);
     setState(() => airports = data);
   }
 
@@ -41,6 +40,7 @@ class _StationselectpopupState extends State<Stationselectpopup> {
             child: Container(
               height: MediaQuery.of(context).size.height * 0.75,
               width: MediaQuery.of(context).size.width * 0.8,
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: Color(0xFF0F1B2D),
                 borderRadius: BorderRadius.circular(60),
@@ -111,7 +111,10 @@ class _StationselectpopupState extends State<Stationselectpopup> {
         padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: Color(0xFF16233A),
-          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color:Colors.white10 
+            ),
+          borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,13 +127,19 @@ class _StationselectpopupState extends State<Stationselectpopup> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'Montserrat',
+                    letterSpacing: 0.1,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   airport,
-                  style: TextStyle(color: Colors.white54, fontSize: 12),
+                  style: TextStyle(
+                    color: Colors.white54, 
+                    fontSize: 10,
+                    fontFamily: 'Montserrat',
+                    ),
                 ),
               ],
             ),
@@ -140,6 +149,7 @@ class _StationselectpopupState extends State<Stationselectpopup> {
                 color: Colors.greenAccent,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'Roboto Condensed',
               ),
             ),
           ],
@@ -150,6 +160,9 @@ class _StationselectpopupState extends State<Stationselectpopup> {
 
   Widget _stationList(BuildContext context) {
     return ListView.builder(
+      padding: const EdgeInsets.only(
+        bottom: 20
+      ),
       itemCount: airports.length,
       itemBuilder: (context, index) {
         final airport = airports[index];
