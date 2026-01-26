@@ -127,10 +127,10 @@ class _DashboardState extends State<Dashboard> {
                               padding: const EdgeInsets.only(left: 30),
                               child: GestureDetector(
                                 onTapUp: (_) => setState(() {
-                                  dest_deptSelected = true;
+                                  dest_deptSelected = false;
                                 }),
                                 onTapDown: (_) => setState(() {
-                                  dest_deptSelected = false;
+                                  dest_deptSelected = true;
                                 }),
                                 onTapCancel: () => setState(() {
                                   dest_deptSelected = false;
@@ -147,7 +147,7 @@ class _DashboardState extends State<Dashboard> {
                                 },
 
                                 child: AnimatedScale(
-                                  scale: dest_deptSelected?1:0.85,
+                                  scale: dest_deptSelected?0.85:1,
                                   duration: const Duration(milliseconds: 150),
                                   curve: Curves.easeOut,
                                   child: Container(

@@ -169,10 +169,10 @@ class _StationselectpopupState extends State<Stationselectpopup> {
         return stationCard(
           city: airport['city'] ?? airport['name'] ?? "Unknown",
           airport: airport['name'] ?? "Unknown",
-          code: airport['icao'] ?? "N/A",
+          code: airport['iata'] ?? "N/A",
           onTap: () {
             setState(() {
-              selectedIcao = airport['icao'];
+              selectedIcao = airport['iata'];
             });
             Navigator.pop(context, selectedIcao);
           },
