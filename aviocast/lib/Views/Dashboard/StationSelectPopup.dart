@@ -171,10 +171,7 @@ class _StationselectpopupState extends State<Stationselectpopup> {
           airport: airport['name'] ?? "Unknown",
           code: airport['iata'] ?? "N/A",
           onTap: () {
-            setState(() {
-              selectedIcao = airport['iata'];
-            });
-            Navigator.pop(context, selectedIcao);
+            Navigator.of(context,rootNavigator: true).pop(airport);
           },
         );
       },

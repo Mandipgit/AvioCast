@@ -12,7 +12,7 @@ bool TransferMode = false;
 bool dest_deptSelected = false;
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  const Dashboard({super.key, selectedIcao});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -21,6 +21,8 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List airports = [];
   String? selectedIcao;
+  String? selectedCity;
+  String? selectedAirportName;
 
   @override
   void initState() {
@@ -33,6 +35,16 @@ class _DashboardState extends State<Dashboard> {
     setState(() => airports = data);
   }
 
+  openStationSelector() {
+    final result = Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (_, __, ___) => const Stationselectpopup(),
+      ),
+    );
+  }
+
   bool TransferMode = false;
   @override
   Widget build(BuildContext context) {
@@ -40,7 +52,7 @@ class _DashboardState extends State<Dashboard> {
       appBar: AppBar(
         backgroundColor: Color(0xFF213448),
         title: Padding(
-          padding: const EdgeInsets.only(top: 10,left:5),
+          padding: const EdgeInsets.only(top: 10, left: 5),
           child: Text(
             "Aviocast",
             style: TextStyle(
@@ -135,19 +147,28 @@ class _DashboardState extends State<Dashboard> {
                                 onTapCancel: () => setState(() {
                                   dest_deptSelected = false;
                                 }),
-                                onTap: () {
-                                  Navigator.push(
+                                onTap: () async {
+                                  final result = await Navigator.push(
                                     context,
                                     PageRouteBuilder(
-                                      opaque: false, 
+                                      opaque: false,
                                       pageBuilder: (_, __, ___) =>
-                                          Stationselectpopup(),
+                                          const Stationselectpopup(),
                                     ),
                                   );
-                                },
+
+                                  if (!mounted) return;
+
+                                  if (result != null) {
+                                    setState(() {
+                                      selectedIcao = result['iata'];
+                                      selectedCity=result['city'];
+                                    });
+                                  }
+                                 },
 
                                 child: AnimatedScale(
-                                  scale: dest_deptSelected?0.85:1,
+                                  scale: dest_deptSelected ? 0.85 : 1,
                                   duration: const Duration(milliseconds: 150),
                                   curve: Curves.easeOut,
                                   child: Container(
@@ -155,7 +176,7 @@ class _DashboardState extends State<Dashboard> {
                                     width: 110,
                                     decoration: BoxDecoration(
                                       color: (Color(0xFF213448)),
-                                        
+
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black45,
@@ -186,7 +207,7 @@ class _DashboardState extends State<Dashboard> {
                                             ),
                                           ),
                                           Text(
-                                            "KTM",
+                                            selectedIcao ?? " ",
                                             style: TextStyle(
                                               fontFamily: 'Roboto Condensed',
                                               color: Colors.white,
@@ -196,10 +217,11 @@ class _DashboardState extends State<Dashboard> {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                              left: 2,top: 5
+                                              left: 2,
+                                              top: 5,
                                             ),
                                             child: Text(
-                                              "Kathmandu",
+                                              selectedCity ?? " ",
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontFamily: 'Montserrat',
@@ -304,7 +326,10 @@ class _DashboardState extends State<Dashboard> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 5,left: 2),
+                                        padding: const EdgeInsets.only(
+                                          top: 5,
+                                          left: 2,
+                                        ),
                                         child: Text(
                                           "Bhadrapur",
                                           style: TextStyle(
