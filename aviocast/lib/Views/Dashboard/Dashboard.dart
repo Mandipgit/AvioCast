@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 // Last:EAE0CF
 bool TransferMode = false;
 bool dest_deptSelected = false;
+bool dest_deptSelected2= false;
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key, selectedIcao});
@@ -23,6 +24,8 @@ class _DashboardState extends State<Dashboard> {
   String? selectedIcao;
   String? selectedCity;
   String? selectedAirportName;
+  String? selectedIcao2;
+  String? selectedCity2;
 
   @override
   void initState() {
@@ -43,9 +46,214 @@ class _DashboardState extends State<Dashboard> {
         pageBuilder: (_, __, ___) => const Stationselectpopup(),
       ),
     );
+    final result2 = Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (_, __, ___) => const Stationselectpopup(),
+      ),
+    );
   }
 
   bool TransferMode = false;
+  Widget departure_Container({required String? dept_selectedIcao, required String?  dept_selectedCity}) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30),
+      child: GestureDetector(
+        onTapUp: (_) => setState(() {
+          dest_deptSelected = false;
+        }),
+        onTapDown: (_) => setState(() {
+          dest_deptSelected = true;
+        }),
+        onTapCancel: () => setState(() {
+          dest_deptSelected = false;
+        }),
+        onTap: () async {
+          final result = await Navigator.push(
+            context,
+            PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => const Stationselectpopup(),
+            ),
+          );
+
+          if (!mounted) return;
+
+          if (result != null) {
+            setState(() {
+              selectedIcao = result['iata'];
+              selectedCity = result['city'];
+            });
+          }
+        },
+
+        child: AnimatedScale(
+          scale: dest_deptSelected ? 0.85 : 1,
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOut,
+          child: Container(
+            height: 100,
+            width: 110,
+            decoration: BoxDecoration(
+              color: (Color(0xFF213448)),
+
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black45,
+                  blurRadius: 10,
+                  offset: Offset(0, 4), // x, y
+                ),
+              ],
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Text(
+                      "DEPARTURE",
+                      style: TextStyle(
+                        color: Colors.white60,
+                        fontFamily: 'Montserrat',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    selectedIcao ?? "KTM",
+                    style: TextStyle(
+                      fontFamily: 'Roboto Condensed',
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2, top: 5),
+                    child: Text(
+                      selectedCity ?? "Kathmandu",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Montserrat',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget dest_Container({
+    required String? dest_selectedIcao,
+    required String? dest_selectedCity
+  }){
+    return Padding(
+      padding: const EdgeInsets.only(right: 30),
+      child: GestureDetector(
+        onTapUp: (_) => setState(() {
+          dest_deptSelected2 = false;
+        }),
+        onTapDown: (_) => setState(() {
+          dest_deptSelected2 = true;
+        }),
+        onTapCancel: () => setState(() {
+          dest_deptSelected2 = false;
+        }),
+        onTap: () async {
+          final result2 = await Navigator.push(
+            context,
+            PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => const Stationselectpopup(),
+            ),
+          );
+
+          if (!mounted) return;
+
+          if (result2 != null) {
+            setState(() {
+              selectedIcao2 = result2['iata'];
+              selectedCity2 = result2['city'];
+            });
+          }
+        },
+
+        child: AnimatedScale(
+          scale: dest_deptSelected2 ? 0.85 : 1,
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOut,
+          child: Container(
+            height: 100,
+            width: 110,
+            decoration: BoxDecoration(
+              color: (Color(0xFF213448)),
+
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black45,
+                  blurRadius: 10,
+                  offset: Offset(0, 4), // x, y
+                ),
+              ],
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Text(
+                      "DESTINATION",
+                      style: TextStyle(
+                        color: Colors.white60,
+                        fontFamily: 'Montserrat',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    selectedIcao2 ?? "___",
+                    style: TextStyle(
+                      fontFamily: 'Roboto Condensed',
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2, top: 5),
+                    child: Text(
+                      selectedCity2 ?? "Target City",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Montserrat',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,108 +343,7 @@ class _DashboardState extends State<Dashboard> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 30),
-                              child: GestureDetector(
-                                onTapUp: (_) => setState(() {
-                                  dest_deptSelected = false;
-                                }),
-                                onTapDown: (_) => setState(() {
-                                  dest_deptSelected = true;
-                                }),
-                                onTapCancel: () => setState(() {
-                                  dest_deptSelected = false;
-                                }),
-                                onTap: () async {
-                                  final result = await Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      opaque: false,
-                                      pageBuilder: (_, __, ___) =>
-                                          const Stationselectpopup(),
-                                    ),
-                                  );
-
-                                  if (!mounted) return;
-
-                                  if (result != null) {
-                                    setState(() {
-                                      selectedIcao = result['iata'];
-                                      selectedCity=result['city'];
-                                    });
-                                  }
-                                 },
-
-                                child: AnimatedScale(
-                                  scale: dest_deptSelected ? 0.85 : 1,
-                                  duration: const Duration(milliseconds: 150),
-                                  curve: Curves.easeOut,
-                                  child: Container(
-                                    height: 100,
-                                    width: 110,
-                                    decoration: BoxDecoration(
-                                      color: (Color(0xFF213448)),
-
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black45,
-                                          blurRadius: 10,
-                                          offset: Offset(0, 4), // x, y
-                                        ),
-                                      ],
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 15,
-                                            ),
-                                            child: Text(
-                                              "DEPARTURE",
-                                              style: TextStyle(
-                                                color: Colors.white60,
-                                                fontFamily: 'Montserrat',
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w900,
-                                              ),
-                                            ),
-                                          ),
-                                          Text(
-                                            selectedIcao ?? " ",
-                                            style: TextStyle(
-                                              fontFamily: 'Roboto Condensed',
-                                              color: Colors.white,
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.w900,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 2,
-                                              top: 5,
-                                            ),
-                                            child: Text(
-                                              selectedCity ?? " ",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'Montserrat',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w900,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            departure_Container(dept_selectedIcao: selectedIcao, dept_selectedCity: selectedCity),
                             GestureDetector(
                               onTapDown: (_) =>
                                   setState(() => TransferMode = true),
@@ -247,6 +354,7 @@ class _DashboardState extends State<Dashboard> {
                               onTap: () {
                                 setState(() {
                                   TransferMode = !TransferMode;
+                                  
                                 });
                               },
                               child: AnimatedOpacity(
@@ -280,71 +388,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ),
                             ),
-
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30),
-                              child: Container(
-                                height: 100,
-                                width: 110,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF213448),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black45,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4), // x, y
-                                    ),
-                                  ],
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 15),
-                                        child: Text(
-                                          "DESTINATION",
-                                          style: TextStyle(
-                                            color: Colors.white60,
-                                            fontFamily: 'Montserrat',
-                                            letterSpacing: 0.5,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        "BDP",
-                                        style: TextStyle(
-                                          fontFamily: 'Roboto Condensed',
-                                          color: Colors.white,
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 5,
-                                          left: 2,
-                                        ),
-                                        child: Text(
-                                          "Bhadrapur",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'Montserrat',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                            dest_Container(dest_selectedIcao: selectedIcao2, dest_selectedCity: selectedCity2)
                           ],
                         ),
                       ),

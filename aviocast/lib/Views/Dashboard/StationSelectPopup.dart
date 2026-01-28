@@ -14,6 +14,7 @@ class Stationselectpopup extends StatefulWidget {
 class _StationselectpopupState extends State<Stationselectpopup> {
   List<Map<String,dynamic>> airports = [];
   String? selectedIcao;
+    int? pressedIndex;
 
   @override
   void initState() {
@@ -158,23 +159,45 @@ class _StationselectpopupState extends State<Stationselectpopup> {
     );
   }
 
-  Widget _stationList(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.only(
-        bottom: 20
-      ),
-      itemCount: airports.length,
-      itemBuilder: (context, index) {
-        final airport = airports[index];
-        return stationCard(
-          city: airport['city'] ?? airport['name'] ?? "Unknown",
-          airport: airport['name'] ?? "Unknown",
-          code: airport['iata'] ?? "N/A",
-          onTap: () {
-            Navigator.of(context,rootNavigator: true).pop(airport);
-          },
-        );
-      },
-    );
-  }
+Widget _stationList(BuildContext context) {
+  return ListView.builder(
+    padding: const EdgeInsets.only(bottom: 20),
+    itemCount: airports.length,
+    itemBuilder: (context, index) {
+      final airport = airports[index];
+      final isPressed = pressedIndex == index;
+
+      return GestureDetector(
+        onTapDown: (_) {
+          setState(() => pressedIndex = index);
+        },
+        onTapUp: (_) {
+          setState(() => pressedIndex = null);
+        },
+        onTapCancel: () {
+          setState(() => pressedIndex = null);
+        },
+        child: AnimatedScale(
+          scale: isPressed ? 0.85 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: isPressed ? 0.85 : 1,
+            child: stationCard(
+              city: airport['city'] ?? airport['name'] ?? "Unknown",
+              airport: airport['name'] ?? "Unknown",
+              code: airport['iata'] ?? "N/A",
+              onTap: () { Navigator.of(context, rootNavigator: true).pop(airport);}, 
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
+
+}
+
+
+
