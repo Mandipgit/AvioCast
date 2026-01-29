@@ -21,11 +21,10 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List airports = [];
-  String? selectedIcao;
-  String? selectedCity;
+  Map<String, dynamic>? departureAirport;
+  Map<String, dynamic>? destinationAirport;
   String? selectedAirportName;
-  String? selectedIcao2;
-  String? selectedCity2;
+  bool cityFilled=false;
 
   @override
   void initState() {
@@ -82,9 +81,8 @@ class _DashboardState extends State<Dashboard> {
 
           if (result != null) {
             setState(() {
-              selectedIcao = result['iata'];
-              selectedCity = result['city'];
-            });
+              departureAirport=result;
+              });
           }
         },
 
@@ -125,18 +123,19 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   Text(
-                    selectedIcao ?? "KTM",
+                    departureAirport?['iata'] ?? "KTM",
                     style: TextStyle(
                       fontFamily: 'Roboto Condensed',
                       color: Colors.white,
                       fontSize: 30,
                       fontWeight: FontWeight.w900,
+                      
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 2, top: 5),
                     child: Text(
-                      selectedCity ?? "Kathmandu",
+                      departureAirport?['city'] ?? "Kathmandu",
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Montserrat',
@@ -182,8 +181,7 @@ class _DashboardState extends State<Dashboard> {
 
           if (result2 != null) {
             setState(() {
-              selectedIcao2 = result2['iata'];
-              selectedCity2 = result2['city'];
+             destinationAirport=result2;
             });
           }
         },
@@ -225,7 +223,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   Text(
-                    selectedIcao2 ?? "___",
+                    destinationAirport?['iata'] ?? "___",
                     style: TextStyle(
                       fontFamily: 'Roboto Condensed',
                       color: Colors.white,
@@ -236,7 +234,7 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.only(left: 2, top: 5),
                     child: Text(
-                      selectedCity2 ?? "Target City",
+                      destinationAirport?['city'] ?? "Target City",
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Montserrat',
@@ -343,19 +341,20 @@ class _DashboardState extends State<Dashboard> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            departure_Container(dept_selectedIcao: selectedIcao, dept_selectedCity: selectedCity),
+                            departure_Container(dept_selectedIcao: departureAirport?['iata'], dept_selectedCity:departureAirport?['city']),
                             GestureDetector(
                               onTapDown: (_) =>
                                   setState(() => TransferMode = true),
                               onTapUp: (_) =>
-                                  setState(() => TransferMode = true),
+                                  setState(() => TransferMode = false),
                               onTapCancel: () =>
-                                  setState(() => TransferMode = true),
+                                  setState(() => TransferMode = false),
                               onTap: () {
                                 setState(() {
-                                  TransferMode = !TransferMode;
-                                  
-                                });
+                                  final temp=destinationAirport;
+                                  destinationAirport=departureAirport;
+                                  departureAirport=temp;
+                                  });
                               },
                               child: AnimatedOpacity(
                                 duration: Duration(milliseconds: 120),
@@ -388,7 +387,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ),
                             ),
-                            dest_Container(dest_selectedIcao: selectedIcao2, dest_selectedCity: selectedCity2)
+                            dest_Container(dest_selectedIcao: destinationAirport?['iata'], dest_selectedCity: destinationAirport?['city'])
                           ],
                         ),
                       ),
