@@ -29,6 +29,16 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    departureAirport={
+      'iata':'KTM',
+      'icao':'VNKT',
+      'name':'Tribhuvan International Airport',
+      'city':'Kathmandu',
+      "latitude":27.69639,
+      "longitude":85.35889,
+      "has_metar":true,
+      "alternates":["VNBW","VNPR","VNJP"]
+    };
     loadAirports();
   }
 
@@ -123,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   Text(
-                    departureAirport?['iata'] ?? "KTM",
+                    departureAirport?['iata'] ?? "___",
                     style: TextStyle(
                       fontFamily: 'Roboto Condensed',
                       color: Colors.white,
@@ -135,7 +145,7 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.only(left: 2, top: 5),
                     child: Text(
-                      departureAirport?['city'] ?? "Kathmandu",
+                      departureAirport?['city'] ?? "Select City",
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Montserrat',
@@ -184,6 +194,12 @@ class _DashboardState extends State<Dashboard> {
              destinationAirport=result2;
             });
           }
+          // else{
+          //   setState(() {
+          //     destinationAirport=result2['KTM'];
+
+          //   });
+          // }
         },
 
         child: AnimatedScale(
