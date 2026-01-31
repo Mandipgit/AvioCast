@@ -67,7 +67,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   bool TransferMode = false;
-  Widget departure_Container({
+  Widget departure_Container({      //This the container to show the departure airport
     required String? dept_selectedIcao,
     required String? dept_selectedCity,
   }) {
@@ -167,7 +167,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget dest_Container({
+  Widget dest_Container({   //This the container to show the destination airport
     required String? dest_selectedIcao,
     required String? dest_selectedCity,
   }) {
