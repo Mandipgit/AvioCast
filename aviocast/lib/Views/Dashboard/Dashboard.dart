@@ -1,8 +1,10 @@
 import 'package:aviocast/Models/airport_models.dart';
 import 'package:aviocast/Views/Dashboard/StationSelectPopup.dart';
 import 'package:aviocast/Views/Dashboard/animationRadar.dart';
+import 'package:aviocast/Views/showRisk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Color Combination:
 // Primary:213448
@@ -65,6 +67,7 @@ class _DashboardState extends State<Dashboard> {
       ),
     );
   }
+  
 
   bool TransferMode = false;
   Widget departure_Container({      //This the container to show the departure airport
@@ -423,7 +426,10 @@ class _DashboardState extends State<Dashboard> {
                           riskLevelChecked = false;
                         }),
                         onTap: () => setState(() {
-                          Navigator.push(context, MaterialPageRoute(builder:(context)=>Animationradar()));
+                          if (departureAirport==null && destinationAirport==null){
+                            HapticFeedback.selectionClick();
+                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Showrisk(departureicao: departureAirport!['icao'],destinationicao: destinationAirport!['icao'],)));
                         }),
                         child: AnimatedScale(
                           scale: riskLevelChecked ? 0.85 : 1,

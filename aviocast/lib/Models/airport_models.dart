@@ -11,8 +11,7 @@ static Future<List<Map<String, dynamic>>> getAirports() async {
   final uri = Uri.parse('$baseUrl/airports');
   final response = await http.get(uri);
 
-  print("STATUS: ${response.statusCode}");
-  print("BODY: ${response.body}");
+  
 
   if (response.statusCode == 200) {
     final decoded = json.decode(response.body);
