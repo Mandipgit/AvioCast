@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:aviocast/Models/airport_models.dart';
 import 'package:aviocast/Views/Dashboard/StationSelectPopup.dart';
 import 'package:aviocast/Views/Dashboard/animationRadar.dart';
@@ -23,12 +25,13 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMixin {
   List airports = [];
   Map<String, dynamic>? departureAirport;
   Map<String, dynamic>? destinationAirport;
   String? selectedAirportName;
   bool cityFilled = false;
+  late AnimationController _controller;
 
   @override
   void initState() {
@@ -44,7 +47,14 @@ class _DashboardState extends State<Dashboard> {
       "alternates": ["VNBW", "VNPR", "VNJP"],
     };
     loadAirports();
+    _controller = AnimationController(vsync: this,
+    duration:const Duration(milliseconds: 500),
+    );
   }
+  void shake(){
+    _controller.forward(from:0);
+  }
+  
 
   Future<void> loadAirports() async {
     final data = await ApiService.getAirports();
@@ -108,60 +118,70 @@ class _DashboardState extends State<Dashboard> {
           scale: dest_deptSelected ? 0.85 : 1,
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
-          child: Container(
-            height: 100,
-            width: 110,
-            decoration: BoxDecoration(
-              color: (Color(0xFF213448)),
-
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black45,
-                  blurRadius: 10,
-                  offset: Offset(0, 4), // x, y
-                ),
-              ],
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15),
-                    child: Text(
-                      "DEPARTURE",
-                      style: TextStyle(
-                        color: Colors.white60,
-                        fontFamily: 'Montserrat',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    departureAirport?['iata'] ?? "___",
-                    style: TextStyle(
-                      fontFamily: 'Roboto Condensed',
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 2, top: 5),
-                    child: Text(
-                      departureAirport?['city'] ?? "Select City",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Montserrat',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder:(context, child){
+              double offset=sin(_controller.value*pi*8)*10;
+              return Transform.translate(
+                  offset: Offset(offset, 0),
+                  child: child,
+                );
+            },
+            child: Container(
+              height: 100,
+              width: 110,
+              decoration: BoxDecoration(
+                color: (Color(0xFF213448)),
+            
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black45,
+                    blurRadius: 10,
+                    offset: Offset(0, 4), // x, y
                   ),
                 ],
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        "DEPARTURE",
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontFamily: 'Montserrat',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      departureAirport?['iata'] ?? "___",
+                      style: TextStyle(
+                        fontFamily: 'Roboto Condensed',
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2, top: 5),
+                      child: Text(
+                        departureAirport?['city'] ?? "Select City",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -208,60 +228,70 @@ class _DashboardState extends State<Dashboard> {
           scale: dest_deptSelected2 ? 0.85 : 1,
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
-          child: Container(
-            height: 100,
-            width: 110,
-            decoration: BoxDecoration(
-              color: (Color(0xFF213448)),
-
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black45,
-                  blurRadius: 10,
-                  offset: Offset(0, 4), // x, y
-                ),
-              ],
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15),
-                    child: Text(
-                      "DESTINATION",
-                      style: TextStyle(
-                        color: Colors.white60,
-                        fontFamily: 'Montserrat',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    destinationAirport?['iata'] ?? " _ _ _ _",
-                    style: TextStyle(
-                      fontFamily: 'Roboto Condensed',
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 2, top: 5),
-                    child: Text(
-                      destinationAirport?['city'] ?? "Select Airport",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Montserrat',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder:(context, child){
+              double offset=sin(_controller.value*pi*8)*10;
+              return Transform.translate(
+                  offset: Offset(offset, 0),
+                  child: child,
+                );
+            },
+            child: Container(
+              height: 100,
+              width: 110,
+              decoration: BoxDecoration(
+                color: (Color(0xFF213448)),
+            
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black45,
+                    blurRadius: 10,
+                    offset: Offset(0, 4), // x, y
                   ),
                 ],
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        "DESTINATION",
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontFamily: 'Montserrat',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      destinationAirport?['iata'] ?? " _ _ _ _",
+                      style: TextStyle(
+                        fontFamily: 'Roboto Condensed',
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2, top: 5),
+                      child: Text(
+                        destinationAirport?['city'] ?? "Select Airport",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -425,12 +455,14 @@ class _DashboardState extends State<Dashboard> {
                         onTapCancel: () => setState(() {
                           riskLevelChecked = false;
                         }),
-                        onTap: () => setState(() {
-                          if (departureAirport==null && destinationAirport==null){
+                        onTap: (){
+                          if (departureAirport==null || destinationAirport==null){
                             HapticFeedback.selectionClick();
+                            shake();
+                            return;
                           }
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>Showrisk(departureicao: departureAirport!['icao'],destinationicao: destinationAirport!['icao'],)));
-                        }),
+                        },
                         child: AnimatedScale(
                           scale: riskLevelChecked ? 0.85 : 1,
                           duration: const Duration(milliseconds: 150),
