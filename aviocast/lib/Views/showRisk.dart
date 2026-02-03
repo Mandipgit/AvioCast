@@ -1,4 +1,5 @@
 import 'package:aviocast/Models/flight_prediction.dart';
+import 'package:aviocast/Views/Dashboard/animationRadar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,7 @@ class _ShowriskState extends State<Showrisk> {
         origin: widget.departureicao,
         destination: widget.destinationicao,
       );
-      
+
       debugPrint(data.toString());
 
       if (!mounted) return;
@@ -41,7 +42,6 @@ class _ShowriskState extends State<Showrisk> {
         isLoading = false;
       });
     } catch (e) {
-      
       setState(() {
         error = e.toString();
         isLoading = false;
@@ -53,8 +53,9 @@ class _ShowriskState extends State<Showrisk> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Flight Risk')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: Animationradar(),
+        ),
       );
     }
     if (error != null) {
@@ -64,7 +65,6 @@ class _ShowriskState extends State<Showrisk> {
       );
     }
 
-    
     if (flightData == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Flight Risk')),

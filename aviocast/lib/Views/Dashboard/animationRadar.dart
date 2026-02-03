@@ -13,6 +13,7 @@ class _AnimationradarState extends State<Animationradar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF213448),
       body: Center(
         child: Lottie.asset(
           'assets/lottie/Radar.json',
