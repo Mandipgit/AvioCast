@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:aviocast/Models/airport_models.dart';
 import 'package:aviocast/Views/Dashboard/StationSelectPopup.dart';
-import 'package:aviocast/Views/Dashboard/animationRadar.dart';
 import 'package:aviocast/Views/showRisk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +87,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
   
 
   bool TransferMode = false;
-  Widget departure_Container({      //This the container to show the departure airport
+  Widget departure_Container({      
     required String? dept_selectedIcao,
     required String? dept_selectedCity,
   }) {
@@ -127,8 +126,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
           child: Container(
-            height: 100,
-            width: 110,
+            height: MediaQuery.of(context).size.height*0.12,
+            width: MediaQuery.of(context).size.width*0.26,
             decoration: BoxDecoration(
               color: (Color(0xFF213448)),
           
@@ -168,7 +167,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 2, top: 5),
+                    padding:  EdgeInsets.only(left: 2, top: 5),
                     child: Text(
                       departureAirport?['city'] ?? "Select City",
                       style: TextStyle(
@@ -227,8 +226,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
           child: Container(
-            height: 100,
-            width: 110,
+            height: MediaQuery.of(context).size.height*0.12,
+            width: MediaQuery.of(context).size.width*0.26,
             decoration: BoxDecoration(
               color: (Color(0xFF213448)),
           
@@ -259,7 +258,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     ),
                   ),
                   Text(
-                    destinationAirport?['iata'] ?? " _ _ _ _",
+                    destinationAirport?['iata'] ?? " ____",
                     style: TextStyle(
                       fontFamily: 'Roboto Condensed',
                       color: Colors.white,
@@ -268,9 +267,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 2, top: 5),
+                    padding: const EdgeInsets.only(left: 2, top: 3),
                     child: Text(
-                      destinationAirport?['city'] ?? "Select Airport",
+                      destinationAirport?['city'] ?? "Select City",
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Montserrat',
@@ -458,7 +457,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               shake();
                               return;
                             }
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Showrisk(departureicao: departureAirport!['icao'],destinationicao: destinationAirport!['icao'],)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Showrisk(departureicao: departureAirport!['icao'],destinationicao: destinationAirport!['icao'],departureiata: departureAirport!['iata'],destinaitoniata:destinationAirport!['iata'] ,)));
                           },
                           child: AnimatedScale(
                             scale: riskLevelChecked ? 0.85 : 1,
