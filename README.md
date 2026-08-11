@@ -1,97 +1,112 @@
 # ✈️ Aviocast
 
-### Aviation Weather • METAR Intelligence • Cloud Analysis
+### Aviation Weather Intelligence for Aviation Enthusiasts
 
-> **Aviation weather, decoded.**
+> **Decode aviation weather. Understand the sky.**
 >
-> Aviocast is a modern aviation weather application built for **aviation enthusiasts**, transforming coded aviation weather observations into understandable and visually engaging weather information.
+> Aviocast is an aviation-focused weather application built for **aviation enthusiasts**, combining meteorological data, **METAR processing**, cloud-cover analysis, and location-based weather forecasting into a unified aviation-oriented experience.
 
 ---
 
-<p align="center">
+## ✈️ About Aviocast
 
-**🌤️ Weather Data**   •   **✈️ Aviation Meteorology**   •   **📡 METAR Parsing**   •   **☁️ Cloud Analysis**
+Aviation weather information is often distributed through specialized meteorological reports such as **METAR (Meteorological Aerodrome Report)**.
 
-</p>
+These reports contain critical atmospheric observations in a compact coded format, including:
+
+* Wind direction and speed
+* Visibility
+* Present weather
+* Cloud amount and cloud base
+* Temperature
+* Dew point
+* Atmospheric pressure
+* Observation time
+
+**Aviocast parses these aviation weather observations and transforms the coded data into understandable meteorological information.**
+
+The application also considers weather conditions at an **alternate aerodrome** when generating its weather assessment, providing additional contextual information beyond the primary aerodrome.
 
 ---
 
-## 🛫 About Aviocast
+# 🛫 Aviation-Centric Location Handling
 
-Aviation weather information is often distributed through specialized formats such as **METAR**, which contain a large amount of meteorological information in a compact coded structure.
+Aviocast uses both internationally recognized airport identification systems:
 
-**Aviocast takes that coded information and makes it easier to understand.**
+### ICAO & IATA Airport Codes
 
-The application retrieves aviation weather observations, parses the METAR report, extracts individual meteorological parameters, and presents them through a clean aviation-oriented interface.
+Airports/aerodromes can be identified using their:
 
-It also applies basic aviation meteorology concepts such as the **Oktas cloud-cover scale** to interpret reported cloud conditions.
+**ICAO Code**
 
-### The idea is simple:
+The four-letter identifier used extensively in aviation operations and aeronautical information.
+
+Example:
 
 ```text
-      Raw Aviation Weather
-              │
-              ▼
-        ┌─────────────┐
-        │    METAR    │
-        │    Parser   │
-        └──────┬──────┘
-               │
-               ▼
-     Meteorological Data
-               │
-       ┌───────┴────────┐
-       ▼                ▼
-  Weather Data     Cloud Analysis
-       │                │
-       └───────┬────────┘
-               ▼
-       Human-Readable
-       Aviation Weather
-               │
-               ▼
-          ✈️ Aviocast
+VNKT — Tribhuvan International Airport
 ```
+
+**IATA Code**
+
+The three-letter identifier commonly used for passenger travel and airport identification.
+
+Example:
+
+```text
+KTM — Tribhuvan International Airport
+```
+
+Aviocast supports the use of **ICAO and IATA identifiers** to associate airport locations with their corresponding meteorological information.
+
+This allows aviation weather data to be tied directly to specific **aerodromes** rather than treating locations simply as generic cities.
 
 ---
 
-## 🌦️ What Aviocast Provides
+# 📡 METAR Processing
 
-### 📡 METAR Processing
+One of the core technical components of Aviocast is **METAR parsing**.
 
-Aviocast works with **METAR (Meteorological Aerodrome Report)** observations and breaks down the coded report into meaningful weather parameters.
-
-Instead of displaying something like:
+For example:
 
 ```text
 VNKT 111000Z 27008KT 6000 FEW025 SCT035 27/20 Q1012
 ```
 
-Aviocast interprets the individual components and presents them in an understandable format.
+Aviocast processes the METAR observation and extracts individual meteorological elements.
+
+### METAR Processing Pipeline
+
+```text
+        METAR Observation
+                │
+                ▼
+        ┌───────────────┐
+        │  METAR Parser │
+        └───────┬───────┘
+                │
+       ┌────────┼─────────┐
+       ▼        ▼         ▼
+     Wind   Visibility   Clouds
+       │        │         │
+       ├────────┼─────────┤
+       ▼        ▼         ▼
+ Temperature  Dew Point  Pressure
+                │
+                ▼
+       Meteorological Data
+                │
+                ▼
+        Aviocast Interface
+```
+
+The parser converts the coded observation into structured weather information that can be interpreted by the application.
 
 ---
 
-### 🌬️ Wind Information
+# ☁️ Cloud Coverage & Oktas
 
-METAR wind observations are parsed to provide information such as:
-
-* Wind direction
-* Wind speed
-* Wind variations
-* Direction in degrees
-* Aviation-style wind representation
-
----
-
-### 👁️ Visibility
-
-Visibility information from METAR observations is extracted and presented in a more readable format, helping users understand the current atmospheric visibility around an aerodrome.
-
----
-
-### ☁️ Cloud Coverage
-
-Aviocast interprets METAR cloud groups such as:
+Aviocast interprets METAR cloud groups including:
 
 ```text
 FEW
@@ -100,187 +115,231 @@ BKN
 OVC
 ```
 
-and maps them to the **Oktas cloud-cover scale**.
+These are associated with the **okta-based representation of sky coverage**.
 
-| METAR | Meaning    | Oktas |
-| :---: | ---------- | :---: |
-|  FEW  | Few clouds |  1–2  |
-|  SCT  | Scattered  |  3–4  |
-|  BKN  | Broken     |  5–7  |
-|  OVC  | Overcast   |   8   |
+| METAR Code | Cloud Amount | Oktas |
+| :--------: | ------------ | :---: |
+|     FEW    | Few          |  1–2  |
+|     SCT    | Scattered    |  3–4  |
+|     BKN    | Broken       |  5–7  |
+|     OVC    | Overcast     |   8   |
 
-This allows coded cloud observations to be represented in a much more intuitive way.
-
----
-
-### 🌡️ Atmospheric Conditions
-
-Aviocast extracts and presents important meteorological parameters including:
-
-* 🌡️ Temperature
-* 💧 Dew point
-* 🌬️ Wind
-* 👁️ Visibility
-* ☁️ Cloud coverage
-* 🧭 Wind direction
-* 📊 Atmospheric pressure
-* 🌧️ Present weather conditions
+The application uses this information to provide a more intuitive representation of **cloud coverage and cloud-base conditions**.
 
 ---
 
-# 🧠 Aviation Meteorology
+# 🌦️ Weather Assessment
 
-A key aspect of Aviocast is its focus on **aviation-specific weather data**, rather than simply providing generic consumer weather information.
+Aviocast does not rely solely on a single weather location when assessing conditions.
 
-The project explores concepts such as:
+### Primary Aerodrome
 
-**METAR**
+The primary airport/aerodrome's weather information is used as the main meteorological reference.
 
-Standardized aerodrome weather observations.
+### Alternate Aerodrome
 
-**Cloud Amount**
-
-Interpretation of FEW, SCT, BKN and OVC cloud groups.
-
-**Oktas**
-
-A traditional method of expressing the fraction of the sky covered by clouds.
-
-**Visibility**
-
-An important meteorological parameter reported in aviation weather observations.
-
-**Dew Point**
-
-Used alongside temperature to understand atmospheric moisture and potential cloud/fog conditions.
-
-**QNH / Pressure**
-
-Atmospheric pressure information reported within aviation weather observations.
-
----
-
-# ⚙️ Technical Implementation
-
-### METAR → Structured Weather Data
-
-The core processing pipeline follows a structured approach:
+Weather data from an **alternate aerodrome** is also considered.
 
 ```text
-METAR String
-     │
-     ▼
-Tokenization
-     │
-     ▼
-METAR Component Detection
-     │
-     ├── Wind
-     ├── Visibility
-     ├── Weather
-     ├── Clouds
-     ├── Temperature
-     ├── Dew Point
-     └── Pressure
-     │
-     ▼
-Data Interpretation
-     │
-     ▼
-Oktas / Cloud Analysis
-     │
-     ▼
-UI Representation
+              ┌─────────────────────┐
+              │  Primary Aerodrome  │
+              │      Weather        │
+              └──────────┬──────────┘
+                         │
+                         ▼
+                 Weather Assessment
+                         ▲
+                         │
+              ┌──────────┴──────────┐
+              │  Alternate Aerodrome│
+              │      Weather        │
+              └─────────────────────┘
 ```
 
-This allows Aviocast to work with aviation weather observations at the **individual component level** instead of simply displaying the original METAR string.
+This provides a broader view of the surrounding aviation weather environment instead of evaluating atmospheric conditions from only one aerodrome.
+
+> **Note:** The alternate-aerodrome weather consideration is a project-level weather assessment feature and should not be interpreted as an operational flight-planning or dispatch decision system.
 
 ---
 
-# 🛠️ Built With
+# 🌬️ Meteorological Parameters
 
-<p align="center">
+Aviocast processes and presents aviation-relevant atmospheric parameters such as:
+
+### 🌬️ Wind
+
+* Wind direction
+* Wind speed
+* Wind variation where available
+
+### 👁️ Visibility
+
+Reported aerodrome visibility extracted from METAR observations.
+
+### ☁️ Cloud Conditions
+
+* Cloud amount
+* Cloud layer
+* Cloud base
+* Oktas representation
+
+### 🌡️ Temperature
+
+* Air temperature
+* Dew point temperature
+
+### 📊 Atmospheric Pressure
+
+* QNH / pressure information where available
+
+### 🌧️ Present Weather
+
+Weather phenomena reported within the METAR observation.
+
+---
+
+# 🧠 Aviation Meteorology Concepts
+
+Aviocast incorporates several aviation meteorological concepts, including:
+
+* **METAR** — routine aerodrome meteorological observations
+* **TAF** — planned future enhancement for aerodrome forecasts
+* **ICAO Airport Identifiers**
+* **IATA Airport Codes**
+* **Aerodrome Weather**
+* **Cloud Amount**
+* **Cloud Base**
+* **Visibility**
+* **Wind Direction & Velocity**
+* **Temperature / Dew Point**
+* **QNH / Atmospheric Pressure**
+* **Alternate Aerodrome Weather**
+* **Oktas Cloud-Cover Representation**
+
+---
+
+# ⚙️ Technical Architecture
+
+The application follows a data-processing approach where aviation weather observations are transformed before being presented to the user.
+
+```text
+┌──────────────────────────────┐
+│   Aviation Weather Source    │
+└──────────────┬───────────────┘
+               │
+               ▼
+        METAR Observation
+               │
+               ▼
+       ┌───────────────┐
+       │ METAR Parsing │
+       └───────┬───────┘
+               │
+               ▼
+   ┌─────────────────────────┐
+   │ Meteorological Elements │
+   └────────────┬────────────┘
+                │
+       ┌────────┴────────┐
+       ▼                 ▼
+ Primary Aerodrome   Alternate Aerodrome
+       │                 │
+       └────────┬────────┘
+                ▼
+       Weather Assessment
+                │
+                ▼
+       Cloud / Oktas Analysis
+                │
+                ▼
+       Human-Readable Data
+                │
+                ▼
+           Aviocast UI
+```
+
+---
+
+# 🛠️ Technology Stack
 
 ### Application
 
-**Flutter** • **Dart**
+* **Flutter**
+* **Dart**
 
-### Data
+### Data & APIs
 
-**METAR** • **Aviation Weather Data** • **REST APIs** • **JSON**
+* **METAR Aviation Weather Data**
+* **REST APIs**
+* **JSON**
 
-### Concepts
+### Aviation / Meteorology
 
-**Aviation Meteorology** • **METAR Parsing** • **Cloud Coverage Analysis**
-
-</p>
-
----
-
-# ✨ Highlights
-
-| Feature                    | Description                                   |
-| -------------------------- | --------------------------------------------- |
-| 📡 **METAR Parser**        | Processes coded aviation weather observations |
-| ☁️ **Cloud Analysis**      | Interprets cloud groups using the Oktas scale |
-| 🌬️ **Wind Data**          | Extracts aviation wind observations           |
-| 👁️ **Visibility**         | Processes reported visibility                 |
-| 🌡️ **Temperature**        | Displays temperature and dew point            |
-| 📊 **Pressure**            | Presents aviation pressure information        |
-| ✈️ **Aviation Focused**    | Designed specifically around aviation weather |
-| 📱 **Flutter Application** | Cross-platform mobile application             |
+* METAR Parsing
+* ICAO Airport Identification
+* IATA Airport Identification
+* Cloud Coverage Analysis
+* Oktas Representation
+* Aerodrome Weather Assessment
+* Alternate Aerodrome Weather Consideration
 
 ---
 
-# 🎯 Why I Built Aviocast
+# ✨ Core Features
 
-Aviocast started from a simple intersection of two interests:
-
-### ✈️ Aviation + 💻 Technology
-
-As someone interested in aviation, I wanted to explore how software could be used to make **aviation meteorological information more accessible and understandable**.
-
-Building Aviocast gave me practical experience with:
-
-* Working with real-world weather APIs
-* Understanding aviation weather formats
-* Parsing structured meteorological data
-* Learning METAR syntax
-* Applying aviation meteorology concepts
-* Working with cloud-cover representation
-* Building a mobile application using Flutter
-* Converting raw technical data into meaningful UI information
+| Feature                         | Description                                                               |
+| ------------------------------- | ------------------------------------------------------------------------- |
+| 📡 **METAR Parsing**            | Converts coded aerodrome observations into structured weather information |
+| ✈️ **ICAO Support**             | Uses ICAO airport identifiers for aviation weather data                   |
+| 🏷️ **IATA Support**            | Uses IATA airport codes for airport identification                        |
+| ☁️ **Cloud Analysis**           | Interprets FEW, SCT, BKN and OVC cloud groups                             |
+| 🌤️ **Oktas Representation**    | Represents reported cloud amount using the okta scale                     |
+| 🌬️ **Wind Analysis**           | Processes wind direction and velocity                                     |
+| 👁️ **Visibility**              | Processes aerodrome visibility observations                               |
+| 🌡️ **Temperature & Dew Point** | Extracts atmospheric temperature information                              |
+| 📊 **Pressure**                 | Processes reported atmospheric pressure/QNH                               |
+| 🛬 **Alternate Aerodrome**      | Considers alternate-aerodrome weather in the weather assessment           |
+| 📱 **Mobile Application**       | Built using Flutter                                                       |
 
 ---
 
-# 🚀 Future Roadmap
+# 🎯 Project Motivation
 
-Aviocast is an evolving project.
+Aviocast was created at the intersection of two interests:
 
-### Planned Improvements
+### ✈️ Aviation + 💻 Software Development
+
+Aviation weather is one of the most interesting areas where software, data, and meteorology come together.
+
+Rather than building another generic weather application, Aviocast focuses on **aviation-specific meteorological information** and the challenge of turning highly compressed weather observations such as METAR into information that is easier for aviation enthusiasts to understand.
+
+Through this project, I explored:
+
+* Aviation weather data
+* METAR syntax and parsing
+* Aerodrome meteorology
+* Cloud-cover interpretation
+* Airport identification systems
+* Weather-data processing
+* Alternate-aerodrome weather consideration
+* Mobile application development with Flutter
+
+---
+
+# 🚀 Future Development
+
+Potential future improvements include:
 
 * [ ] **TAF parsing and interpretation**
-* [ ] METAR history and timeline
+* [ ] METAR history and observation timelines
 * [ ] Interactive aviation weather maps
-* [ ] Improved cloud-base visualization
 * [ ] Wind visualization
-* [ ] Airport-focused weather dashboards
-* [ ] Weather trend analysis
+* [ ] Improved cloud-base visualization
+* [ ] Aerodrome weather trends
 * [ ] NOTAM integration
-* [ ] SIGMET / AIRMET information
-* [ ] More advanced aviation meteorological analysis
-
----
-
-# 📸 Screenshots
-
-<p align="center">
-
-### Aviocast Interface
-
-*Screenshots coming soon.*
-
-</p>
+* [ ] SIGMET / AIRMET integration
+* [ ] More detailed alternate-aerodrome analysis
+* [ ] Advanced aviation meteorological analysis
 
 ---
 
@@ -288,7 +347,7 @@ Aviocast is an evolving project.
 
 **🚧 Active Development**
 
-Aviocast is currently an evolving project. New aviation weather features, visualizations, and meteorological interpretations may be added as development continues.
+Aviocast is an evolving project focused on exploring aviation meteorology through software and data processing.
 
 ---
 
@@ -298,13 +357,13 @@ Aviocast is currently an evolving project. New aviation weather features, visual
 
 **BSc. CSIT Student • Software Developer • Aviation Enthusiast**
 
-Aviocast is a personal project built at the intersection of my interests in **aviation, meteorology, and software development**.
+Aviocast is a personal project combining my interests in **aviation, meteorology, and software engineering**.
 
 ---
 
 <p align="center">
 
-### ✈️ Decode the Sky. Understand the Weather.
+### ✈️ Decode the Weather. Explore Aviation.
 
 **Aviocast**
 
